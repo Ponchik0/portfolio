@@ -49,7 +49,7 @@ export const ru: Dictionary = {
     ],
     facts: [
       { value: '2025', label: 'год начала пути' },
-      { value: '5+', label: 'основных проектов и модов' },
+      { value: '6+', label: 'основных проектов и модов' },
       { value: '18.5k+', label: 'скачиваний на Thunderstore' },
     ],
   },
@@ -97,7 +97,6 @@ export const ru: Dictionary = {
         tech: ['Next.js 15', 'React 19', 'TypeScript', 'Tailwind CSS v4', 'TanStack Query', 'Supabase', 'Upstash Redis', 'PWA'],
         wip: true,
         links: [
-          { label: 'Live Demo', url: 'https://www.zoovix.live' },
           { label: 'GitHub', url: 'https://github.com/Ponchik0/Zoovix' },
         ],
         image: 'projects/zoovix.jpg',
@@ -117,7 +116,49 @@ export const ru: Dictionary = {
         },
       },
 
-      // ── 2. SUPER CREATURES (UNITY MOD) ───────────────────
+      // ── 2. POEZDATO (WEB REDESIGN CONCEPT) ───────────────
+      {
+        slug: 'poezdato',
+        title: 'Поездато',
+        category: 'web',
+        kind: 'Концепт редизайна poizdato.net с живыми данными',
+        year: '2026',
+        lede: 'Современный редизайн популярного сервиса расписаний поездов и электричек: мгновенный поиск, автокомплит станций, интерактивное табло и уведомления об изменениях рейсов в реальном времени.',
+        highlights: [
+          'Парсинг и кэширование расписаний poizdato.net в реальном времени',
+          'Интерактивное табло станций с подсветкой ближайшего рейса',
+          'Автономная работа Node.js сервера без сторонних зависимостей',
+          'Сохранение избранных маршрутов и автоуведомления об изменениях в графике',
+          'Двуязычие (UK/RU) с прямой интеграцией покупки билетов УЗ',
+        ],
+        metrics: [
+          { value: '0.2s', label: 'скорость поиска' },
+          { value: '100%', label: 'живые данные poizdato' },
+          { value: '0 dep', label: 'чистый Node.js' },
+        ],
+        tech: ['Node.js', 'Vanilla JS', 'Real-time Scraping', 'CSS3 Layout', 'In-Memory Cache', 'Responsive UX'],
+        wip: false,
+        links: [
+          { label: 'GitHub', url: 'https://github.com/Ponchik0' },
+        ],
+        image: 'projects/poezdato.png',
+        details: {
+          intro: [
+            '«Поездато» — это полноценный концепт редизайна устаревшего интерфейса сервиса расписаний движения поездов и пригородных электричек poizdato.net.',
+            'Главная цель — превратить перегруженный рекламой и устаревший сервис в сверхбыстрый, эстетичный, удобный для смартфона современный инструмент пассажира.',
+          ],
+          challenges: [
+            { title: 'Парсинг и кэширование живых данных', text: 'Реализован прокси-сервер на чистом Node.js, парсящий данные со структуры poizdato.net без сторонних библиотек с многоуровневым кэшированием в памяти (от 10 мин до 24 ч).' },
+            { title: 'Отслеживание изменений рейсов', text: 'Фоновый алгоритм сравнения контрольных отпечатков расписания для сохраненных маршрутов с моментальным уведомлением пассажира.' },
+          ],
+          stack: [
+            { name: 'Клиентская часть', items: ['Vanilla JavaScript (ES6+)', 'Modern CSS3 & Flex/Grid', 'LocalStorage Sync', 'Web Notifications API', 'Mobile-first UX'] },
+            { name: 'Бэкенд & Архитектура', items: ['Node.js HTTP Server (Zero Dependencies)', 'In-Memory Cache System', 'HTML Stream Parsing', 'Railway API Proxy'] },
+          ],
+        },
+      },
+
+      // ── 3. SUPER CREATURES (UNITY MOD) ───────────────────
       {
         slug: 'supercreatures',
         title: 'SuperCreatures',

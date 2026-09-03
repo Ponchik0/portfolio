@@ -49,7 +49,7 @@ export const en: Dictionary = {
     ],
     facts: [
       { value: '2025', label: 'year started' },
-      { value: '5+', label: 'core projects & mods' },
+      { value: '6+', label: 'core projects & mods' },
       { value: '18.5k+', label: 'Thunderstore downloads' },
     ],
   },
@@ -97,7 +97,6 @@ export const en: Dictionary = {
         tech: ['Next.js 15', 'React 19', 'TypeScript', 'Tailwind CSS v4', 'TanStack Query', 'Supabase', 'Upstash Redis', 'PWA'],
         wip: true,
         links: [
-          { label: 'Live Demo', url: 'https://www.zoovix.live' },
           { label: 'GitHub', url: 'https://github.com/Ponchik0/Zoovix' },
         ],
         image: 'projects/zoovix.jpg',
@@ -117,7 +116,49 @@ export const en: Dictionary = {
         },
       },
 
-      // ── 2. SUPER CREATURES (UNITY MOD) ───────────────────
+      // ── 2. POEZDATO (WEB REDESIGN CONCEPT) ───────────────
+      {
+        slug: 'poezdato',
+        title: 'Poezdato',
+        category: 'web',
+        kind: 'Railway Timetable Redesign Concept with Live Scraping',
+        year: '2026',
+        lede: 'A modern, responsive redesign concept for a popular Ukrainian railway transit timetable service: instant search, station autocomplete, live departure boards, and background schedule change alerts.',
+        highlights: [
+          'Real-time transit timetable scraping and in-memory caching',
+          'Interactive departure boards highlighting upcoming trains',
+          'Zero-dependency Node.js server architecture',
+          'Saved routes with automated background schedule change alerts',
+          'Bilingual interface (UK/RU) with direct railway booking links',
+        ],
+        metrics: [
+          { value: '0.2s', label: 'search response' },
+          { value: '100%', label: 'live transit data' },
+          { value: '0 dep', label: 'pure Node.js' },
+        ],
+        tech: ['Node.js', 'Vanilla JS', 'Real-time Scraping', 'CSS3 Layout', 'In-Memory Cache', 'Responsive UX'],
+        wip: false,
+        links: [
+          { label: 'GitHub', url: 'https://github.com/Ponchik0' },
+        ],
+        image: 'projects/poezdato.png',
+        details: {
+          intro: [
+            'Poezdato is a complete modern redesign concept for the popular Ukrainian railway transit timetable service poizdato.net.',
+            'The core goal was to replace an ad-heavy, 2010s-era layout with an ultra-responsive, mobile-first companion featuring live timetable data.',
+          ],
+          challenges: [
+            { title: 'Real-time Scraping & Zero-Dep Cache', text: 'Engineered a standalone pure Node.js proxy server parsing live timetable tables with multi-tier in-memory TTL caching (10 min to 24 hours).' },
+            { title: 'Live Schedule Change Alerts', text: 'Background schedule fingerprinting comparing stops and departure times to notify passengers when timetable changes occur.' },
+          ],
+          stack: [
+            { name: 'Frontend', items: ['Vanilla JavaScript (ES6+)', 'Modern CSS3 & Flex/Grid', 'LocalStorage Sync', 'Web Notifications API', 'Mobile-first UX'] },
+            { name: 'Backend & Architecture', items: ['Node.js HTTP Server (Zero Dependencies)', 'In-Memory Cache System', 'HTML Stream Parsing', 'Railway API Proxy'] },
+          ],
+        },
+      },
+
+      // ── 3. SUPER CREATURES (UNITY MOD) ───────────────────
       {
         slug: 'supercreatures',
         title: 'SuperCreatures',
