@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Bohdan — Junior Frontend Developer · CV</title>
+    <style>
+      :root {
+        --ink: #191712;
+        --muted: #5f5a4e;
+        --line: #e2ddd2;
+        --accent: #bc4f24;
+        --bg: #ffffff;
+      }
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+
+      html { background: #eceae4; }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        color: var(--ink);
+        line-height: 1.5;
+        font-size: 10.5pt;
+      }
+
+      .page {
+        width: 210mm;
+        min-height: 297mm;
+        margin: 0 auto;
+        padding: 16mm 17mm;
+        background: var(--bg);
+      }
+
+      /* header */
+      .top { border-bottom: 2px solid var(--ink); padding-bottom: 5mm; margin-bottom: 6mm; }
+      .name { font-size: 27pt; font-weight: 800; letter-spacing: -0.02em; line-height: 1.05; }
+      .role { font-size: 12pt; font-weight: 600; color: var(--accent); margin-top: 1.5mm; }
+      .contact { display: flex; flex-wrap: wrap; gap: 3mm 6mm; margin-top: 4mm; font-size: 9.5pt; color: var(--muted); }
+      .contact a { color: var(--muted); text-decoration: none; }
+      .contact b { color: var(--ink); font-weight: 600; }
+
+      .summary { color: var(--muted); font-size: 10.5pt; margin-bottom: 6mm; max-width: 165mm; }
+
+      .section { margin-bottom: 6mm; }
+      .section-title {
+        font-size: 8.5pt; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase;
+        color: var(--accent); margin-bottom: 3mm; padding-bottom: 1.5mm; border-bottom: 1px solid var(--line);
+      }
+
+      .item { margin-bottom: 4.5mm; break-inside: avoid; }
+      .item:last-child { margin-bottom: 0; }
+      .item-head { display: flex; justify-content: space-between; align-items: baseline; gap: 6mm; }
+      .item-title { font-size: 11pt; font-weight: 700; }
+      .item-title .tag { font-size: 8pt; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em; margin-left: 2mm; }
+      .item-meta { font-size: 9pt; color: var(--muted); white-space: nowrap; font-weight: 600; }
+      .item-sub { font-size: 9.5pt; color: var(--accent); font-weight: 600; margin-top: 0.5mm; }
+      .item-desc { font-size: 9.8pt; color: var(--muted); margin-top: 1.5mm; }
+      .item-tech { font-size: 8.8pt; color: var(--ink); margin-top: 1.5mm; }
+      .item-tech b { color: var(--muted); font-weight: 600; }
+
+      .skills-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2mm 8mm; }
+      .skill-row { font-size: 9.6pt; }
+      .skill-row b { display: inline-block; min-width: 34mm; color: var(--ink); font-weight: 700; }
+      .skill-row span { color: var(--muted); }
+
+      a { color: var(--accent); }
+
+      @page { size: A4; margin: 0; }
+      @media print {
+        html { background: #fff; }
+        .page { margin: 0; box-shadow: none; }
+      }
+      @media screen {
+        .page { margin: 8mm auto; box-shadow: 0 6px 30px rgba(0,0,0,0.12); }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <div class="top">
+        <div class="name">Bohdan</div>
+        <div class="role">Junior Frontend Developer</div>
+        <div class="contact">
+          <span><b>Location</b> · Kyiv, Ukraine</span>
+          <span><b>Email</b> · <a href="mailto:regressphobia@outlook.com">regressphobia@outlook.com</a></span>
+          <span><b>GitHub</b> · <a href="https://github.com/Ponchik0">github.com/Ponchik0</a></span>
+        </div>
+      </div>
+
+      <p class="summary">
+        Self-taught junior frontend developer building real, full products end-to-end, from
+        architecture and UI to backend and deployment. Comfortable across the modern React/Next.js
+        stack and drawn to tasks beyond the browser: real-time sync, desktop apps and API
+        integrations. Learning fast by shipping.
+      </p>
+
+      <div class="section">
+        <div class="section-title">Projects</div>
+
+        <div class="item">
+          <div class="item-head">
+            <div class="item-title">Zoovix <span class="tag">In development</span></div>
+            <div class="item-meta">2026 · Live at zoovix.live</div>
+          </div>
+          <div class="item-sub">Movie, series &amp; anime catalog with watch-party</div>
+          <div class="item-desc">
+            A full web product built solo. Real-time synced watch-parties, gamification (quests,
+            streaks, in-app store), custom session-cookie auth, 5 languages with localized URLs,
+            PWA, and production SEO (hreflang, sitemap, OG images, JSON-LD). Data aggregated from
+            TMDB, MyAnimeList, IMDb, Kinopoisk and YouTube.
+          </div>
+          <div class="item-tech"><b>Stack:</b> Next.js · React 19 · TypeScript · Tailwind CSS v4 · TanStack Query · Supabase · Upstash Redis</div>
+        </div>
+
+        <div class="item">
+          <div class="item-head">
+            <div class="item-title">FACEIT Stats Modern</div>
+            <div class="item-meta">2026 · GitHub</div>
+          </div>
+          <div class="item-sub">CS2 stats plugin for Steam profiles</div>
+          <div class="item-desc">
+            A plugin for the Steam client (Millennium) that embeds FACEIT and Leetify CS2 stats
+            (ELO, K/D, win rate, level) directly into the profile page, in a custom dark UI.
+          </div>
+          <div class="item-tech"><b>Stack:</b> JavaScript · TypeScript · CSS · Millennium · FACEIT / Leetify APIs</div>
+        </div>
+
+        <div class="item">
+          <div class="item-head">
+            <div class="item-title">Harmonix <span class="tag">Unfinished</span></div>
+            <div class="item-meta">2025–2026 · Paused</div>
+          </div>
+          <div class="item-sub">Cross-platform desktop music player</div>
+          <div class="item-desc">
+            An Electron player merging YouTube and SoundCloud, with Discord Rich Presence, automatic
+            lyrics, offline storage and cloud playlist sync. Paused, but a solid dive into audio
+            streaming and native desktop APIs.
+          </div>
+          <div class="item-tech"><b>Stack:</b> Electron · React · TypeScript · Vite · Howler.js · hls.js · Supabase</div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Skills</div>
+        <div class="skills-grid">
+          <div class="skill-row"><b>Languages</b><span>TypeScript, JavaScript, Python (Discord bots)</span></div>
+          <div class="skill-row"><b>Frontend</b><span>React 18/19, Next.js (App Router), Tailwind CSS, shadcn/ui, Radix, Framer Motion</span></div>
+          <div class="skill-row"><b>Data &amp; State</b><span>TanStack Query, Zustand, Supabase (PostgreSQL), Upstash Redis, IndexedDB</span></div>
+          <div class="skill-row"><b>Desktop &amp; more</b><span>Electron, Vite, PWA, custom auth, Git &amp; GitHub</span></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">About</div>
+        <p class="item-desc" style="margin-top:0">
+          Started programming in 2025 with small projects and Discord bots, then moved into building
+          complete products. Based in Kyiv. Open to junior roles and internships.
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

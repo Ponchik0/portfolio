@@ -1,0 +1,417 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from './Header.astro';
+import Footer from './Footer.astro';
+import { getDict, homePath, projectPath, withBase, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+  slug: string;
+}
+
+const { lang, slug } = Astro.props;
+const dict = getDict(lang);
+const t = dict.projects;
+
+const index = t.items.findIndex((p) => p.slug === slug);
+const project = t.items[index];
+const next = t.items[(index + 1) % t.items.length];
+const hasNext = t.items.length > 1 && next.slug !== project.slug;
+---
+
+<Base lang={lang} dict={dict} pageTitle={`${project.title} — ${dict.hero.name}`}>
+  <Header lang={lang} dict={dict} sectionBase={homePath(lang)} />
+
+  <main class="case">
+    <div class="container">
+      <a class="back" href={`${homePath(lang)}#projects`}>
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path d="M13 8H3M7 4 3 8l4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        {t.caseBack}
+      </a>
+
+      <header class="head" data-reveal>
+        <p class="meta">
+          <span>{project.year}</span>
+          <span class="dot" aria-hidden="true">·</span>
+          <span>{project.kind}</span>
+          {project.wip && <span class="wip">{t.wipBadge}</span>}
+        </p>
+        <h1 class="title">{project.title}</h1>
+        <p class="lede">{project.lede}</p>
+
+        {project.links.length > 0 && (
+          <div class="links">
+            {project.links.map((link) => (
+              <a class="link" href={link.url} target="_blank" rel="noopener noreferrer">
+                {link.label}
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                  <path d="M4 12 12 4M6 4h6v6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </a>
+            ))}
+          </div>
+        )}
+      </header>
+
+      {project.image && (
+        <div class="shot" data-reveal>
+          <img src={withBase(project.image)} alt={project.title} loading="lazy" />
+        </div>
+      )}
+
+      {project.metrics.length > 0 && (
+        <div class="metrics" data-reveal>
+          {project.metrics.map((m) => (
+            <div class="metric">
+              <span class="metric-value">{m.value}</span>
+              <span class="metric-label">{m.label}</span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <div class="body">
+        <section class="block" data-reveal>
+          <h2 class="block-title">{t.caseAbout}</h2>
+          <div class="prose">
+            {project.details.intro.map((p) => (
+              <p>{p}</p>
+            ))}
+          </div>
+        </section>
+
+        <section class="block" data-reveal>
+          <h2 class="block-title">{t.caseFeatures}</h2>
+          <ul class="features" role="list">
+            {project.highlights.map((h) => (
+              <li>{h}</li>
+            ))}
+          </ul>
+        </section>
+
+        <section class="block" data-reveal>
+          <h2 class="block-title">{t.caseChallenges}</h2>
+          <div class="challenges">
+            {project.details.challenges.map((c) => (
+              <article class="challenge">
+                <h3 class="challenge-title">{c.title}</h3>
+                <p class="challenge-text">{c.text}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section class="block" data-reveal>
+          <h2 class="block-title">{t.caseStack}</h2>
+          <div class="stack">
+            {project.details.stack.map((group) => (
+              <div class="stack-group">
+                <h3 class="stack-name">{group.name}</h3>
+                <ul class="tech" role="list">
+                  {group.items.map((item) => (
+                    <li class="chip">{item}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
+
+      <nav class="foot-nav" aria-label={t.caseBack}>
+        <a class="foot-back" href={`${homePath(lang)}#projects`}>{t.caseBack}</a>
+        {hasNext && (
+          <a class="foot-next" href={projectPath(lang, next.slug)}>
+            <span class="foot-next-label">{t.caseNext}</span>
+            <span class="foot-next-title">
+              {next.title}
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </span>
+          </a>
+        )}
+      </nav>
+    </div>
+  </main>
+
+  <Footer dict={dict} />
+</Base>
+
+<style>
+  .case {
+    padding-top: clamp(6.5rem, 12vh, 9rem);
+    padding-bottom: var(--section-gap);
+  }
+
+  .back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--muted);
+    transition: color 0.2s, gap 0.25s var(--ease-out);
+  }
+  .back:hover {
+    color: var(--accent);
+    gap: 0.75rem;
+  }
+
+  .head {
+    max-width: 46rem;
+    margin-top: 2.5rem;
+  }
+
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.7rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--accent);
+  }
+  .meta .dot {
+    color: var(--line);
+  }
+  .wip {
+    padding: 0.25rem 0.7rem;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .title {
+    margin-top: 1rem;
+    font-size: clamp(2.6rem, 7vw, 4.5rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.02;
+  }
+
+  .lede {
+    margin-top: 1.4rem;
+    font-size: clamp(1.1rem, 2vw, 1.35rem);
+    line-height: 1.6;
+    color: var(--muted);
+  }
+
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.4rem;
+    margin-top: 2rem;
+  }
+  .link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-weight: 700;
+    font-size: 0.95rem;
+    border-bottom: 1.5px solid var(--line);
+    padding-bottom: 0.2rem;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .link:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .shot {
+    margin-top: clamp(2.5rem, 6vw, 4rem);
+    border-radius: 1.25rem;
+    overflow: hidden;
+    border: 1px solid var(--line-soft);
+    background: var(--bg-elev);
+    max-height: 540px;
+  }
+  .shot img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-height: 540px;
+    object-fit: cover;
+  }
+
+  .metrics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+    gap: clamp(1.2rem, 3vw, 2rem);
+    margin-top: clamp(2.5rem, 6vw, 4rem);
+    padding: clamp(1.6rem, 4vw, 2.2rem) 0;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  .metric {
+    display: grid;
+    gap: 0.4rem;
+  }
+  .metric-value {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 600;
+    font-size: clamp(2rem, 5vw, 2.8rem);
+    line-height: 1;
+    color: var(--accent);
+  }
+  .metric-label {
+    font-size: 0.9rem;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+
+  .body {
+    display: grid;
+    gap: clamp(3rem, 7vw, 4.5rem);
+    margin-top: clamp(3rem, 7vw, 4.5rem);
+    max-width: 52rem;
+  }
+
+  .block-title {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 500;
+    font-size: clamp(1.5rem, 3.2vw, 2rem);
+    margin-bottom: 1.6rem;
+    color: var(--ink);
+  }
+
+  .prose {
+    display: grid;
+    gap: 1.1rem;
+  }
+  .prose p {
+    font-size: clamp(1rem, 1.6vw, 1.1rem);
+    line-height: 1.75;
+    color: var(--muted);
+    max-width: 42rem;
+  }
+
+  .features {
+    display: grid;
+    gap: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .features li {
+    position: relative;
+    padding: 1rem 0 1rem 1.8rem;
+    border-top: 1px solid var(--line-soft);
+    font-size: 1.02rem;
+    line-height: 1.5;
+    color: var(--ink);
+  }
+  .features li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 1.45rem;
+    width: 7px;
+    height: 7px;
+    border-radius: 999px;
+    background: var(--accent);
+  }
+
+  .challenges {
+    display: grid;
+    gap: 1.2rem;
+  }
+  .challenge {
+    padding: clamp(1.5rem, 3.5vw, 2rem);
+    border: 1px solid var(--line-soft);
+    border-radius: 1.25rem;
+    background: var(--bg-elev);
+  }
+  .challenge-title {
+    font-size: 1.15rem;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    margin-bottom: 0.6rem;
+  }
+  .challenge-text {
+    color: var(--muted);
+    line-height: 1.65;
+  }
+
+  .stack {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    gap: clamp(1.4rem, 3vw, 2rem);
+  }
+  .stack-name {
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 1rem;
+  }
+  .tech {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  .foot-nav {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    margin-top: clamp(3.5rem, 8vw, 5.5rem);
+    padding-top: 2rem;
+    border-top: 1px solid var(--line);
+  }
+  .foot-back {
+    font-weight: 700;
+    color: var(--muted);
+    transition: color 0.2s;
+  }
+  .foot-back:hover {
+    color: var(--accent);
+  }
+  .foot-next {
+    display: grid;
+    justify-items: end;
+    gap: 0.3rem;
+    text-align: right;
+  }
+  .foot-next-label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--muted);
+  }
+  .foot-next-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: clamp(1.3rem, 3vw, 1.8rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    transition: color 0.2s, gap 0.25s var(--ease-out);
+  }
+  .foot-next:hover .foot-next-title {
+    color: var(--accent);
+    gap: 0.8rem;
+  }
+
+  @media (max-width: 560px) {
+    .foot-nav {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .foot-next {
+      justify-items: start;
+      text-align: left;
+    }
+  }
+</style>

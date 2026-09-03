@@ -1,0 +1,167 @@
+---
+import type { Dictionary } from '../i18n/types';
+
+interface Props {
+  dict: Dictionary;
+}
+
+const { dict } = Astro.props;
+const t = dict.hero;
+---
+
+<section class="hero">
+  <div class="container">
+    <p class="badge" data-reveal>
+      <span class="gem" aria-hidden="true">◆</span>
+      {t.badge}
+    </p>
+
+    <h1 class="title">
+      <span class="intro" data-reveal style="--reveal-delay: 0.08s">{t.intro}</span>
+      <span class="name" data-reveal style="--reveal-delay: 0.16s">{t.name}</span>
+      <span class="role" data-reveal style="--reveal-delay: 0.24s">
+        <em class="accent-serif">{t.roleAccent}</em>&nbsp;{t.roleRest}
+      </span>
+    </h1>
+
+    <p class="tagline" data-reveal style="--reveal-delay: 0.32s">{t.tagline}</p>
+
+    <div class="actions" data-reveal style="--reveal-delay: 0.4s">
+      <a class="btn btn--solid" href="#projects">
+        {t.ctaProjects}
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path d="M8 2v11M3.5 8.5 8 13l4.5-4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+      </a>
+      <a class="btn btn--ghost" href="#contact">{t.ctaContact}</a>
+    </div>
+  </div>
+
+  <a class="scroll-hint" href="#about" aria-hidden="true" tabindex="-1">
+    <span>{t.scroll}</span>
+    <span class="scroll-line"></span>
+  </a>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    min-height: 100svh;
+    display: flex;
+    align-items: center;
+    padding-top: 4.25rem;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.5rem 1.1rem;
+    background: var(--accent-soft);
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: clamp(1.8rem, 4vh, 3rem);
+  }
+
+  .gem {
+    font-size: 0.5rem;
+    transform: translateY(-1px);
+  }
+
+  .title {
+    display: grid;
+    gap: 0.2em;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+
+  .intro {
+    font-size: clamp(1.05rem, 2.4vw, 1.5rem);
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    color: var(--muted);
+  }
+
+  .name {
+    font-size: clamp(3.2rem, 10.5vw, 7.5rem);
+    text-wrap: balance;
+  }
+
+  .role {
+    font-size: clamp(1.5rem, 4.2vw, 2.9rem);
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    color: var(--muted);
+    margin-top: 0.35em;
+    text-wrap: balance;
+  }
+
+  .role .accent-serif {
+    font-size: 1.12em;
+  }
+
+  .tagline {
+    max-width: 34rem;
+    margin-top: clamp(1.6rem, 3.5vh, 2.6rem);
+    font-size: clamp(1rem, 1.6vw, 1.15rem);
+    color: var(--muted);
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.9rem;
+    margin-top: clamp(2rem, 4.5vh, 3.2rem);
+  }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 2.2rem;
+    right: var(--gutter);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.7rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--muted);
+    writing-mode: vertical-rl;
+  }
+
+  .scroll-line {
+    width: 1px;
+    height: 3.4rem;
+    background: var(--line);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .scroll-line::after {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    top: -40%;
+    height: 40%;
+    background: var(--accent);
+    animation: drip 2s var(--ease-out) infinite;
+  }
+
+  @keyframes drip {
+    to {
+      top: 110%;
+    }
+  }
+
+  @media (max-width: 720px) {
+    .scroll-hint {
+      display: none;
+    }
+  }
+</style>

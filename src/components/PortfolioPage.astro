@@ -1,0 +1,38 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from './Header.astro';
+import Hero from './Hero.astro';
+import Marquee from './Marquee.astro';
+import About from './About.astro';
+import Projects from './Projects.astro';
+import Mini from './Mini.astro';
+import Skills from './Skills.astro';
+import Experience from './Experience.astro';
+import Contact from './Contact.astro';
+import Footer from './Footer.astro';
+import DotifyNowPlaying from './DotifyNowPlaying.astro';
+import { getDict, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const dict = getDict(lang);
+---
+
+<Base lang={lang} dict={dict}>
+  <Header lang={lang} dict={dict} />
+  <main>
+    <Hero dict={dict} />
+    <Marquee words={dict.marquee} />
+    <About dict={dict} />
+    <Projects dict={dict} lang={lang} />
+    <Mini dict={dict} />
+    <Skills dict={dict} />
+    <Experience dict={dict} />
+    <Contact dict={dict} />
+  </main>
+  <Footer dict={dict} />
+  <DotifyNowPlaying lang={lang} token="dty_3f38291d1273a4fe24e0fd381f1c84f2" />
+</Base>

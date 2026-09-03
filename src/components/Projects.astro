@@ -1,0 +1,571 @@
+---
+import SectionHead from './SectionHead.astro';
+import { withBase, projectPath, type Lang } from '../i18n';
+import type { Dictionary } from '../i18n/types';
+
+interface Props {
+  dict: Dictionary;
+  lang: Lang;
+}
+
+const { dict, lang } = Astro.props;
+const t = dict.projects;
+const isRu = lang === 'ru';
+
+const isUk = lang === 'uk';
+const cats = {
+  web: isUk ? 'Веб-проєкти' : isRu ? 'Веб-проекты' : 'Web Projects',
+  mods: isUk ? 'Моди для ігор' : isRu ? 'Моды для игр' : 'Game Mods',
+  all: isUk ? 'Усі роботи' : isRu ? 'Все работы' : 'All Works',
+};
+
+const counts = {
+  web: t.items.filter(p => (p.category || 'web') === 'web').length,
+  mods: t.items.filter(p => p.category === 'mods').length,
+  all: t.items.length,
+};
+---
+
+<section class="section" id="projects">
+  <div class="container">
+    <SectionHead num="02" label={t.label} heading={t.heading} headingAccent={t.headingAccent} />
+
+    <!-- Filter Tabs (Web Projects is active by default) -->
+    <div class="filter-tabs" role="tablist">
+      <button class="tab active" data-filter="web" role="tab" aria-selected="true">
+        <svg class="tab-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="2" y1="12" x2="22" y2="12"></line>
+          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+        </svg>
+        <span>{cats.web}</span>
+        <span class="tab-count">{counts.web}</span>
+      </button>
+
+      <button class="tab" data-filter="mods" role="tab" aria-selected="false">
+        <svg class="tab-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="6" width="20" height="12" rx="3"></rect>
+          <path d="M6 12h4m-2-2v4m7-2h.01m3 0h.01"></path>
+        </svg>
+        <span>{cats.mods}</span>
+        <span class="tab-count">{counts.mods}</span>
+      </button>
+
+      <button class="tab" data-filter="all" role="tab" aria-selected="false">
+        <svg class="tab-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+        </svg>
+        <span>{cats.all}</span>
+        <span class="tab-count">{counts.all}</span>
+      </button>
+    </div>
+
+    <!-- Projects List -->
+    <div class="list" id="projects-list">
+      {
+        t.items.map((project, i) => {
+          const isFlagship = project.slug === 'zoovix';
+          const isDefaultHidden = (project.category || 'web') !== 'web';
+          return (
+            <article 
+              class={`project ${isFlagship ? 'project--flagship' : ''}`} 
+              data-reveal 
+              data-category={project.category || 'web'}
+              style={isDefaultHidden ? 'display: none;' : ''}
+            >
+              <div class="visual">
+                {project.image ? (
+                  <img src={withBase(project.image)} alt={project.title} loading="lazy" class="visual-img" />
+                ) : (
+                  <div class="placeholder" aria-hidden="true">
+                    <span class="ph-index">{String(i + 1).padStart(2, '0')}</span>
+                    <span class="ph-ring" />
+                    <span class="ph-ring ph-ring--2" />
+                  </div>
+                )}
+              </div>
+
+              <div class="info">
+                <header class="head">
+                  <span class="index">{String(i + 1).padStart(2, '0')}</span>
+                  {isFlagship && (
+                    <span class="flagship-badge">
+                      {isUk ? 'ФЛАГМАНСЬКИЙ ПРОЄКТ' : isRu ? 'ФЛАГМАНСКИЙ ПРОЕКТ' : 'FLAGSHIP PROJECT'}
+                    </span>
+                  )}
+                  {project.wip && <span class="wip">{t.wipBadge}</span>}
+                  {project.category && (
+                    <span class="cat-badge">
+                      {project.category === 'mods' ? 'Unity Mod' : 'Web App'}
+                    </span>
+                  )}
+                </header>
+
+                <h3 class="name">{project.title}</h3>
+                <p class="kind">{project.kind}</p>
+                <p class="desc">{project.lede || (project as any).description}</p>
+
+                <!-- Clean Metrics Row with Stylish SVG Icons -->
+                {project.metrics && project.metrics.length > 0 && (
+                  <div class="metrics-row" role="list">
+                    {project.metrics.map((m) => {
+                      const lbl = m.label.toLowerCase();
+                      const isDl = lbl.includes('скачиван') || lbl.includes('download');
+                      const isLike = lbl.includes('лайк') || lbl.includes('like');
+                      const isLang = lbl.includes('язык') || lbl.includes('lang');
+                      const isSource = lbl.includes('источник') || lbl.includes('source');
+                      const isCoop = lbl.includes('мульти') || lbl.includes('co-op') || lbl.includes('multi');
+
+                      return (
+                        <div class="metric-badge" role="listitem">
+                          {isDl && (
+                            <svg class="metric-svg metric-svg--dl" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                              <polyline points="7 10 12 15 17 10"></polyline>
+                              <line x1="12" y1="15" x2="12" y2="3"></line>
+                            </svg>
+                          )}
+                          {isLike && (
+                            <svg class="metric-svg metric-svg--like" width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                            </svg>
+                          )}
+                          {isLang && (
+                            <svg class="metric-svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                              <circle cx="12" cy="12" r="10"></circle>
+                              <line x1="2" y1="12" x2="22" y2="12"></line>
+                              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                            </svg>
+                          )}
+                          {isSource && (
+                            <svg class="metric-svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                              <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+                              <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+                              <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+                            </svg>
+                          )}
+                          {isCoop && (
+                            <svg class="metric-svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                              <circle cx="9" cy="7" r="4"></circle>
+                              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                            </svg>
+                          )}
+                          {!isDl && !isLike && !isLang && !isSource && !isCoop && (
+                            <svg class="metric-svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                            </svg>
+                          )}
+
+                          <span class="metric-val">{m.value}</span>
+                          <span class="metric-lbl">{m.label}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+
+                <ul class="tech" role="list">
+                  {project.tech.map((item) => (
+                    <li class="chip">{item}</li>
+                  ))}
+                </ul>
+
+                <div class="links">
+                  {project.details && (
+                    <a class="link link--case" href={projectPath(lang, project.slug)}>
+                      {t.caseLink}
+                      <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                        <path
+                          d="M3 8h10M9 4l4 4-4 4"
+                          stroke="currentColor"
+                          stroke-width="1.8"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
+                    </a>
+                  )}
+                  {project.links.map((link) => (
+                    <a class="link" href={link.url} target="_blank" rel="noopener noreferrer">
+                      {link.label}
+                      <svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                        <path
+                          d="M4 12 12 4M6 4h6v6"
+                          stroke="currentColor"
+                          stroke-width="1.8"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            </article>
+          );
+        })
+      }
+    </div>
+  </div>
+</section>
+
+<script>
+  const tabs = document.querySelectorAll<HTMLButtonElement>('.filter-tabs .tab');
+  const projects = document.querySelectorAll<HTMLElement>('.project[data-category]');
+
+  tabs.forEach((tab) => {
+    tab.addEventListener('click', () => {
+      tabs.forEach((t) => {
+        t.classList.remove('active');
+        t.setAttribute('aria-selected', 'false');
+      });
+      tab.classList.add('active');
+      tab.setAttribute('aria-selected', 'true');
+
+      const filter = tab.dataset.filter || 'web';
+
+      projects.forEach((proj) => {
+        const cat = proj.dataset.category;
+        if (filter === 'all' || cat === filter) {
+          proj.style.display = 'grid';
+          proj.style.opacity = '1';
+          proj.style.transform = 'translateY(0)';
+        } else {
+          proj.style.display = 'none';
+        }
+      });
+    });
+  });
+</script>
+
+<style>
+  /* Category Tabs */
+  .filter-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 2rem;
+    margin-bottom: 3.5rem;
+  }
+
+  .tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.6rem 1.25rem;
+    border-radius: 999px;
+    border: 1px solid var(--line-soft);
+    background: var(--bg-elev);
+    color: var(--muted);
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.25s var(--ease-out);
+  }
+
+  .tab:hover {
+    border-color: var(--line);
+    color: var(--ink);
+    transform: translateY(-2px);
+  }
+
+  .tab.active {
+    background: var(--ink);
+    color: var(--bg);
+    border-color: var(--ink);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+  }
+
+  .tab.active .tab-icon {
+    stroke: var(--bg);
+  }
+
+  .tab.active .tab-count {
+    background: rgba(255, 255, 255, 0.18);
+    color: var(--bg);
+    border-color: transparent;
+  }
+
+  .tab-icon {
+    flex-shrink: 0;
+    stroke: currentColor;
+    transition: stroke 0.2s;
+  }
+
+  .tab-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 5px;
+    border-radius: 99px;
+    background: var(--line-soft);
+    border: 1px solid var(--line-soft);
+    font-size: 0.72rem;
+    font-weight: 800;
+    color: var(--muted);
+    transition: all 0.2s;
+  }
+
+  .list {
+    display: grid;
+    gap: clamp(3.5rem, 8vw, 6rem);
+  }
+
+  .project {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: clamp(2rem, 5vw, 4.5rem);
+    align-items: center;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+
+  .project:nth-child(even) .visual {
+    order: 2;
+  }
+
+  /* ── Visual Container & Image Framing ── */
+  .visual {
+    position: relative;
+    border-radius: 1.25rem;
+    overflow: hidden;
+    border: 1px solid var(--line-soft);
+    aspect-ratio: 4 / 3;
+    background: var(--bg-elev);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.6s var(--ease-out), box-shadow 0.6s var(--ease-out), border-color 0.4s;
+  }
+
+  .project:hover .visual {
+    transform: translateY(-6px);
+    border-color: var(--line);
+    box-shadow: 0 24px 48px -24px rgba(25, 23, 18, 0.25);
+  }
+
+  .visual-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.6s var(--ease-out);
+  }
+
+  .project:hover .visual-img {
+    transform: scale(1.05);
+  }
+
+  .flagship-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.28rem 0.75rem;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .placeholder {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    background:
+      radial-gradient(ellipse 80% 70% at 75% 20%, var(--accent-soft), transparent 60%),
+      var(--bg-elev);
+  }
+
+  .ph-index {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 600;
+    font-size: clamp(5rem, 12vw, 9rem);
+    color: var(--line);
+    z-index: 1;
+  }
+
+  .ph-ring {
+    position: absolute;
+    width: 62%;
+    aspect-ratio: 1;
+    border: 1px solid var(--line-soft);
+    border-radius: 999px;
+    right: -18%;
+    top: -22%;
+  }
+
+  .ph-ring--2 {
+    width: 44%;
+    right: auto;
+    top: auto;
+    left: -12%;
+    bottom: -18%;
+    border-color: var(--accent-soft);
+  }
+
+  /* ── Header & Badges ── */
+  .head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.1rem;
+  }
+
+  .index {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 1.15rem;
+    color: var(--accent);
+  }
+
+  .wip {
+    padding: 0.28rem 0.8rem;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .cat-badge {
+    padding: 0.28rem 0.75rem;
+    border-radius: 999px;
+    background: var(--bg-elev);
+    border: 1px solid var(--line-soft);
+    color: var(--muted);
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+
+  .name {
+    font-size: clamp(1.6rem, 3.4vw, 2.4rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.12;
+  }
+
+  .kind {
+    margin-top: 0.4rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--accent);
+  }
+
+  .desc {
+    margin-top: 1.1rem;
+    color: var(--muted);
+    line-height: 1.7;
+    max-width: 32rem;
+  }
+
+  /* ── Metrics Row with Modern SVG Icons ── */
+  .metrics-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: 1.25rem;
+  }
+
+  .metric-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.35rem 0.8rem;
+    border-radius: 0.65rem;
+    background: var(--bg-elev);
+    border: 1px solid var(--line-soft);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  }
+
+  .metric-svg {
+    flex-shrink: 0;
+    color: var(--accent);
+  }
+
+  .metric-svg--like {
+    color: #ef4444;
+  }
+
+  .metric-val {
+    font-weight: 800;
+    font-size: 0.88rem;
+    color: var(--ink);
+  }
+
+  .metric-lbl {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--muted);
+  }
+
+  .tech {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1.2rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.4rem;
+    margin-top: 1.6rem;
+  }
+
+  .link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-weight: 700;
+    font-size: 0.95rem;
+    border-bottom: 1.5px solid var(--line);
+    padding-bottom: 0.2rem;
+    transition: color 0.2s, border-color 0.2s;
+  }
+
+  .link:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .link svg {
+    transition: transform 0.3s var(--ease-out);
+  }
+
+  .link:hover svg {
+    transform: translate(2px, -2px);
+  }
+
+  .link--case {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .link--case:hover svg {
+    transform: translateX(3px);
+  }
+
+  @media (max-width: 840px) {
+    .project,
+    .project:nth-child(even) {
+      grid-template-columns: 1fr;
+    }
+
+    .project:nth-child(even) .visual {
+      order: 0;
+    }
+  }
+</style>

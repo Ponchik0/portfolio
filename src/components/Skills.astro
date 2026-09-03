@@ -1,0 +1,113 @@
+---
+import SectionHead from './SectionHead.astro';
+import type { Dictionary } from '../i18n/types';
+
+interface Props {
+  dict: Dictionary;
+}
+
+const { dict } = Astro.props;
+const t = dict.skills;
+---
+
+<section class="section" id="skills">
+  <div class="container">
+    <SectionHead num="04" label={t.label} heading={t.heading} headingAccent={t.headingAccent} />
+
+    <div class="groups">
+      {
+        t.groups.map((group, i) => (
+          <div class="group" data-reveal style={`--reveal-delay: ${i * 0.1}s`}>
+            <h3 class="group-name">
+              <span class="group-index">{String(i + 1).padStart(2, '0')}</span>
+              {group.name}
+            </h3>
+            <ul class="items" role="list">
+              {group.items.map((item) => (
+                <li class="item">{item}</li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .groups {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    gap: clamp(1.2rem, 2.5vw, 1.8rem);
+  }
+
+  .group {
+    padding: clamp(1.6rem, 3vw, 2.2rem);
+    border: 1px solid var(--line-soft);
+    border-radius: 1.25rem;
+    background: var(--bg-elev);
+    transition: transform 0.5s var(--ease-out), border-color 0.3s;
+  }
+
+  .group:hover {
+    transform: translateY(-5px);
+    border-color: var(--line);
+  }
+
+  .group-name {
+    display: flex;
+    align-items: baseline;
+    gap: 0.7rem;
+    font-size: 1.15rem;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    margin-bottom: 1.4rem;
+  }
+
+  .group-index {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 500;
+    font-size: 0.95rem;
+    color: var(--accent);
+  }
+
+  .items {
+    display: grid;
+    gap: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .item {
+    padding-block: 0.7rem;
+    border-top: 1px solid var(--line-soft);
+    font-size: 0.98rem;
+    font-weight: 600;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    transition: color 0.2s, padding-left 0.3s var(--ease-out);
+  }
+
+  .item::before {
+    content: '';
+    width: 5px;
+    height: 5px;
+    border-radius: 999px;
+    background: var(--line);
+    flex-shrink: 0;
+    transition: background-color 0.2s;
+  }
+
+  .item:hover {
+    color: var(--ink);
+    padding-left: 0.4rem;
+  }
+
+  .item:hover::before {
+    background: var(--accent);
+  }
+
+</style>

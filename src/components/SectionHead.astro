@@ -1,0 +1,21 @@
+---
+interface Props {
+  num: string;
+  label: string;
+  heading: string;
+  headingAccent: string;
+}
+
+const { num, label, heading, headingAccent } = Astro.props;
+---
+
+<div class="section-head" data-reveal>
+  <p class="section-label">
+    <span class="num">{num}</span>
+    {label}
+  </p>
+  <h2 class="section-title">
+    {heading}
+    <em class="accent-serif">{headingAccent}</em>
+  </h2>
+</div>

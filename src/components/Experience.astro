@@ -1,0 +1,181 @@
+---
+import SectionHead from './SectionHead.astro';
+import type { Dictionary } from '../i18n/types';
+
+interface Props {
+  dict: Dictionary;
+}
+
+const { dict } = Astro.props;
+const t = dict.experience;
+---
+
+<section class="section" id="experience">
+  <div class="container">
+    <SectionHead num="04" label={t.label} heading={t.heading} headingAccent={t.headingAccent} />
+
+    <div class="journey-timeline">
+      {
+        t.items.map((item, i) => (
+          <div class="milestone" data-reveal style={`--reveal-delay: ${i * 0.1}s`}>
+            <!-- Left Axis Spine & Step Marker -->
+            <div class="spine" aria-hidden="true">
+              <div class="node">
+                <span class="node-center"></span>
+              </div>
+              {i < t.items.length - 1 && <div class="line"></div>}
+            </div>
+
+            <!-- Milestone Card -->
+            <div class="milestone-card">
+              <div class="milestone-header">
+                <span class="period-pill">{item.period}</span>
+                <span class="place-tag">{item.place}</span>
+              </div>
+
+              <h3 class="milestone-title">{item.title}</h3>
+              <p class="milestone-desc">{item.description}</p>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .journey-timeline {
+    margin-top: clamp(2.5rem, 5vw, 4rem);
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .milestone {
+    display: grid;
+    grid-template-columns: 28px minmax(0, 1fr);
+    gap: clamp(1.2rem, 3.5vw, 2.5rem);
+    position: relative;
+    padding-bottom: clamp(2.2rem, 4.5vw, 3.2rem);
+  }
+
+  .milestone:last-child {
+    padding-bottom: 0;
+  }
+
+  /* ── Left Axis Spine ── */
+  .spine {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 28px;
+  }
+
+  .node {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 2px solid var(--accent);
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    margin-top: 0.35rem;
+    flex-shrink: 0;
+    transition: transform 0.25s var(--ease-out), background-color 0.25s;
+  }
+
+  .milestone:hover .node {
+    transform: scale(1.3);
+    background: var(--accent);
+  }
+
+  .node-center {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--accent);
+    transition: background-color 0.25s;
+  }
+
+  .milestone:hover .node-center {
+    background: var(--bg);
+  }
+
+  .line {
+    position: absolute;
+    top: 1.5rem;
+    bottom: -0.5rem;
+    width: 1px;
+    background: var(--line-soft);
+    z-index: 1;
+  }
+
+  /* ── Milestone Card ── */
+  .milestone-card {
+    background: var(--bg-elev);
+    border: 1px solid var(--line-soft);
+    border-radius: 1.25rem;
+    padding: clamp(1.4rem, 3vw, 2rem);
+    transition: transform 0.4s var(--ease-out), border-color 0.3s, box-shadow 0.4s;
+  }
+
+  .milestone:hover .milestone-card {
+    transform: translateY(-4px);
+    border-color: var(--line);
+    box-shadow: 0 20px 40px -20px rgba(25, 23, 18, 0.2);
+  }
+
+  .milestone-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.8rem;
+    margin-bottom: 0.9rem;
+  }
+
+  .period-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.85rem;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 0.95rem;
+    font-weight: 700;
+  }
+
+  .place-tag {
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .milestone-title {
+    font-size: clamp(1.2rem, 2.2vw, 1.5rem);
+    font-weight: 800;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+    line-height: 1.25;
+  }
+
+  .milestone-desc {
+    margin-top: 0.8rem;
+    color: var(--muted);
+    line-height: 1.7;
+    font-size: 0.96rem;
+  }
+
+  @media (max-width: 640px) {
+    .milestone {
+      gap: 1rem;
+    }
+  }
+</style>

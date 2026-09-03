@@ -1,0 +1,389 @@
+---
+import { homePath, type Lang } from '../i18n';
+import type { Dictionary } from '../i18n/types';
+
+interface Props {
+  lang: Lang;
+  dict: Dictionary;
+  /** Префикс для якорных ссылок. Пусто на главной ('#about'); на под-страницах
+      передаём homePath(lang), чтобы ссылки вели на секции главной ('/#about'). */
+  sectionBase?: string;
+}
+
+const { lang, dict, sectionBase = '' } = Astro.props;
+
+const navItems = [
+  { href: `${sectionBase}#about`, id: 'about', label: dict.nav.about },
+  { href: `${sectionBase}#projects`, id: 'projects', label: dict.nav.projects },
+  { href: `${sectionBase}#skills`, id: 'skills', label: dict.nav.skills },
+  { href: `${sectionBase}#experience`, id: 'experience', label: dict.nav.experience },
+  { href: `${sectionBase}#contact`, id: 'contact', label: dict.nav.contact },
+];
+---
+
+<header class="header">
+  <div class="container header-inner">
+    <nav class="nav-pill" aria-label="Main">
+      {
+        navItems.map((item) => (
+          <a class="nav-link" href={item.href} data-section={item.id}>
+            {item.label}
+          </a>
+        ))
+      }
+    </nav>
+
+    <div class="controls">
+      <div class="pill">
+        <div class="lang" role="group" aria-label="Language">
+          <a class:list={['lang-link', { active: lang === 'en' }]} href={homePath('en')}
+            aria-current={lang === 'en' ? 'page' : undefined}>EN</a
+          >
+          <span class="lang-sep" aria-hidden="true">/</span>
+          <a class:list={['lang-link', { active: lang === 'uk' }]} href={homePath('uk')}
+            aria-current={lang === 'uk' ? 'page' : undefined}>UA</a
+          >
+          <span class="lang-sep" aria-hidden="true">/</span>
+          <a class:list={['lang-link', { active: lang === 'ru' }]} href={homePath('ru')}
+            aria-current={lang === 'ru' ? 'page' : undefined}>RU</a
+          >
+        </div>
+
+        <span class="pill-sep" aria-hidden="true"></span>
+
+        <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <circle cx="12" cy="12" r="4.4" stroke="currentColor" stroke-width="2"></circle>
+            <path
+              d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5 5l1.7 1.7M17.3 17.3L19 19M19 5l-1.7 1.7M6.7 17.3L5 19"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            ></path>
+          </svg>
+          <svg class="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path
+              d="M20.3 14.6A8.6 8.6 0 0 1 9.4 3.7a8.6 8.6 0 1 0 10.9 10.9Z"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linejoin="round"
+            ></path>
+          </svg>
+        </button>
+      </div>
+
+      <button class="burger pill" id="burger" aria-label="Menu" aria-expanded="false" aria-controls="mobile-menu">
+        <span class="burger-line"></span>
+        <span class="burger-line"></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- Мобильное меню живёт ВНЕ шапки: backdrop-filter у предков ломает position: fixed -->
+<div class="mobile-menu" id="mobile-menu" hidden>
+  <nav class="mobile-nav" aria-label="Mobile">
+    {
+      navItems.map((item, i) => (
+        <a class="mobile-link" href={item.href} style={`--i: ${i}`}>
+          <span class="mobile-num">{String(i + 1).padStart(2, '0')}</span>
+          {item.label}
+        </a>
+      ))
+    }
+  </nav>
+</div>
+
+<style>
+  .header {
+    position: fixed;
+    inset-inline: 0;
+    top: 0;
+    z-index: 50;
+    padding-top: 0.85rem;
+    pointer-events: none;
+    transition: transform 0.45s var(--ease-out), opacity 0.35s ease;
+  }
+
+  /* прячется при скролле вниз, выезжает при скролле вверх */
+  .header.is-hidden {
+    transform: translateY(-130%);
+    opacity: 0;
+  }
+
+  .header-inner {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+  }
+
+  .header-inner > * {
+    pointer-events: auto;
+  }
+
+  /* ── стеклянные «пилюли» ── */
+  .nav-pill,
+  .pill {
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--line-soft);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--bg-elev) 78%, transparent);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 10px 32px -18px rgba(20, 16, 10, 0.35);
+  }
+
+  .nav-pill {
+    grid-column: 2;
+    gap: 0.2rem;
+    padding: 0.32rem;
+  }
+
+  .nav-link {
+    padding: 0.48rem 1.05rem;
+    border-radius: 999px;
+    font-size: 0.875rem;
+    font-weight: 650;
+    color: var(--muted);
+    transition: color 0.2s, background-color 0.2s;
+  }
+
+  .nav-link:hover {
+    color: var(--ink);
+    background: var(--line-soft);
+  }
+
+  .nav-link.active {
+    color: var(--accent);
+    background: var(--accent-soft);
+  }
+
+  /* ── правый блок ── */
+  .controls {
+    grid-column: 3;
+    justify-self: end;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .pill {
+    gap: 0.75rem;
+    padding: 0.42rem 0.95rem;
+    height: 2.65rem;
+  }
+
+  .pill-sep {
+    width: 1px;
+    height: 1.1rem;
+    background: var(--line-soft);
+  }
+
+  .lang {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+  }
+
+  .lang-sep {
+    color: var(--line);
+  }
+
+  .lang-link {
+    color: var(--muted);
+    transition: color 0.2s;
+  }
+
+  .lang-link:hover {
+    color: var(--ink);
+  }
+
+  .lang-link.active {
+    color: var(--accent);
+  }
+
+  .theme-toggle {
+    display: grid;
+    place-items: center;
+    color: var(--muted);
+    transition: color 0.2s, transform 0.25s var(--ease-out);
+  }
+
+  .theme-toggle:hover {
+    color: var(--accent);
+    transform: rotate(15deg);
+  }
+
+  :global(:root[data-theme='dark']) .icon-moon {
+    display: none;
+  }
+
+  :global(:root:not([data-theme='dark'])) .icon-sun {
+    display: none;
+  }
+
+  /* ── бургер ── */
+  .burger {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    width: 2.65rem;
+    padding: 0;
+  }
+
+  .burger-line {
+    display: block;
+    height: 2px;
+    width: 18px;
+    background: var(--ink);
+    border-radius: 2px;
+    transition: transform 0.3s var(--ease-out);
+  }
+
+  .burger[aria-expanded='true'] .burger-line:first-child {
+    transform: translateY(3.5px) rotate(45deg);
+  }
+
+  .burger[aria-expanded='true'] .burger-line:last-child {
+    transform: translateY(-3.5px) rotate(-45deg);
+  }
+
+  /* ── мобильное меню ── */
+  .mobile-menu {
+    position: fixed;
+    inset: 0;
+    z-index: 48;
+    background: var(--bg);
+    padding: 5.5rem var(--gutter) 2rem;
+    overflow-y: auto;
+  }
+
+  .mobile-nav {
+    display: grid;
+  }
+
+  .mobile-link {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    padding-block: 1.15rem;
+    border-bottom: 1px solid var(--line-soft);
+    font-size: clamp(1.6rem, 6vw, 2.2rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    opacity: 0;
+    transform: translateY(14px);
+    animation: menu-in 0.45s var(--ease-out) forwards;
+    animation-delay: calc(var(--i) * 0.06s);
+  }
+
+  .mobile-menu[hidden] .mobile-link {
+    animation: none;
+  }
+
+  .mobile-num {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 500;
+    font-size: 1rem;
+    color: var(--accent);
+  }
+
+  @keyframes menu-in {
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @media (max-width: 760px) {
+    .nav-pill {
+      display: none;
+    }
+
+    .burger {
+      display: flex;
+    }
+  }
+</style>
+
+<script>
+  // ── живая шапка: вниз — прячется, вверх — выезжает ──
+  const headerEl = document.querySelector('.header');
+  let lastY = window.scrollY;
+
+  window.addEventListener(
+    'scroll',
+    () => {
+      const y = window.scrollY;
+      const menuOpen =
+        document.getElementById('burger')?.getAttribute('aria-expanded') === 'true';
+
+      if (menuOpen || y < 120) {
+        headerEl?.classList.remove('is-hidden');
+      } else if (y > lastY + 4) {
+        headerEl?.classList.add('is-hidden');
+      } else if (y < lastY - 4) {
+        headerEl?.classList.remove('is-hidden');
+      }
+      lastY = y;
+    },
+    { passive: true },
+  );
+
+  // ── переключение темы ──
+  document.getElementById('theme-toggle')?.addEventListener('click', () => {
+    const root = document.documentElement;
+    const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+    root.dataset.theme = next;
+    localStorage.setItem('theme', next);
+  });
+
+  // ── мобильное меню ──
+  const burger = document.getElementById('burger');
+  const menu = document.getElementById('mobile-menu');
+
+  const setMenu = (open: boolean) => {
+    burger?.setAttribute('aria-expanded', String(open));
+    if (menu) menu.hidden = !open;
+    document.body.style.overflow = open ? 'hidden' : '';
+  };
+
+  burger?.addEventListener('click', () => {
+    setMenu(burger.getAttribute('aria-expanded') !== 'true');
+  });
+
+  menu?.querySelectorAll('a').forEach((link) => {
+    link.addEventListener('click', () => setMenu(false));
+  });
+
+  // ── подсветка активной секции в навигации ──
+  const links = new Map<string, Element>();
+  document.querySelectorAll('.nav-link[data-section]').forEach((link) => {
+    const id = (link as HTMLElement).dataset.section;
+    if (id) links.set(id, link);
+  });
+
+  const spy = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        links.forEach((link, id) => {
+          link.classList.toggle('active', id === entry.target.id);
+        });
+      }
+    },
+    { rootMargin: '-40% 0px -55% 0px', threshold: 0 },
+  );
+
+  links.forEach((_link, id) => {
+    const section = document.getElementById(id);
+    if (section) spy.observe(section);
+  });
+</script>

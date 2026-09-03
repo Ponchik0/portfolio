@@ -1,0 +1,275 @@
+---
+import type { Dictionary } from '../i18n/types';
+
+interface Props {
+  dict: Dictionary;
+}
+
+const { dict } = Astro.props;
+---
+
+<div class="preloader" id="preloader" data-name={dict.hero.name}>
+  <div class="editor" aria-hidden="true">
+    <div class="editor__bar">
+      <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+      <span class="editor__file">launch.ts</span>
+    </div>
+    <div class="code" id="pre-code"></div>
+    <div class="status" id="pre-status">
+      <span class="status__mark"></span>
+      <span id="pre-status-text">booting…</span>
+    </div>
+  </div>
+</div>
+
+<!-- is:inline — проверка сессии должна отработать ДО первой отрисовки, иначе мигнёт -->
+<script is:inline>
+  (() => {
+    const el = document.getElementById('preloader');
+    if (!el) return;
+
+    const finish = () => {
+      if (el.dataset.done) return;
+      el.dataset.done = '1';
+      sessionStorage.setItem('intro-done', '1');
+      document.body.style.overflow = '';
+      el.classList.add('leave');
+      setTimeout(() => {
+        el.remove();
+        window.dispatchEvent(new Event('preloader:done'));
+      }, 700);
+    };
+
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (sessionStorage.getItem('intro-done') || reduced) {
+      el.dataset.done = '1';
+      el.remove();
+      window.addEventListener('DOMContentLoaded', () =>
+        window.dispatchEvent(new Event('preloader:done')),
+      );
+      return;
+    }
+
+    document.body.style.overflow = 'hidden';
+    el.addEventListener('click', finish);
+
+    const NAME = el.dataset.name || 'dev';
+    const code = document.getElementById('pre-code');
+    const status = document.getElementById('pre-status');
+    const statusText = document.getElementById('pre-status-text');
+
+    const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+    const newLine = () => {
+      code.querySelectorAll('.line.active').forEach((l) => l.classList.remove('active'));
+      const d = document.createElement('div');
+      d.className = 'line active';
+      code.appendChild(d);
+      return d;
+    };
+
+    // печатает массив токенов {t: текст, c: css-класс} в строку, посимвольно
+    async function type(line, tokens, speed = 15) {
+      for (const tok of tokens) {
+        const span = document.createElement('span');
+        if (tok.c) span.className = tok.c;
+        line.appendChild(span);
+        for (const ch of tok.t) {
+          if (el.dataset.done) return;
+          span.textContent += ch;
+          await sleep(speed);
+        }
+      }
+    }
+
+    // стирает строку посимвольно (для эффекта «исправления опечатки»)
+    async function backspace(line, speed = 42) {
+      line.textContent = line.textContent; // схлопываем спаны в текст
+      while (line.textContent.length) {
+        if (el.dataset.done) return;
+        line.textContent = line.textContent.slice(0, -1);
+        await sleep(speed);
+      }
+      line.textContent = '';
+    }
+
+    const setStatus = (cls, text) => {
+      status.className = 'status ' + cls;
+      statusText.textContent = text;
+    };
+
+    async function run() {
+      setStatus('is-run', 'compiling…');
+
+      await type(newLine(), [{ t: 'const', c: 'kw' }, { t: ' dev ' }, { t: '=', c: 'op' }, { t: ' {' }]);
+      await type(newLine(), [{ t: '  name', c: 'prop' }, { t: ': ' }, { t: '"' + NAME + '"', c: 'str' }, { t: ',' }]);
+      await type(newLine(), [{ t: '  role', c: 'prop' }, { t: ': ' }, { t: '"beginning developer"', c: 'str' }, { t: ',' }]);
+      await type(newLine(), [{ t: '  learning', c: 'prop' }, { t: ': ' }, { t: 'true', c: 'kw' }, { t: ',' }]);
+      await type(newLine(), [{ t: '}' }]);
+      newLine(); // пустая строка
+      const call = newLine();
+      await type(call, [{ t: 'launhc', c: 'fn' }, { t: '(dev)' }]); // опечатка
+
+      if (el.dataset.done) return;
+      code.classList.add('shake');
+      setStatus('is-error', "ReferenceError: 'launhc' is not defined");
+      await sleep(750);
+      code.classList.remove('shake');
+
+      setStatus('is-run', 'fixing…');
+      await backspace(call, 32);
+      await type(call, [{ t: 'launch', c: 'fn' }, { t: '(dev)' }]); // исправлено
+
+      if (el.dataset.done) return;
+      setStatus('is-ok', 'compiled ✓  launching…');
+      await sleep(520);
+      finish();
+    }
+
+    run();
+
+    // страховка: дольше 7.5 секунд не держим ни при каких условиях
+    setTimeout(finish, 7500);
+  })();
+</script>
+
+<style>
+  .preloader {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background: var(--bg);
+    display: grid;
+    place-items: center;
+    padding: var(--gutter);
+    cursor: pointer;
+    transition: transform 0.7s cubic-bezier(0.76, 0, 0.24, 1);
+  }
+
+  /* шторка уезжает вверх */
+  .preloader.leave {
+    transform: translateY(-100%);
+    pointer-events: none;
+  }
+
+  .editor {
+    width: min(34rem, 92vw);
+    border: 1px solid var(--line);
+    border-radius: 0.9rem;
+    background: var(--bg-elev);
+    box-shadow: 0 30px 60px -30px rgba(25, 23, 18, 0.28);
+    overflow: hidden;
+    animation: editor-in 0.6s var(--ease-out) both;
+  }
+
+  @keyframes editor-in {
+    from { opacity: 0; transform: translateY(12px) scale(0.985); }
+    to { opacity: 1; transform: none; }
+  }
+
+  .editor__bar {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.7rem 0.95rem;
+    border-bottom: 1px solid var(--line-soft);
+  }
+
+  .dot {
+    width: 0.62rem;
+    height: 0.62rem;
+    border-radius: 999px;
+    background: var(--line);
+  }
+  .dot:nth-child(1) { background: #e0703f; }
+  .dot:nth-child(2) { background: #d9b64e; opacity: 0.85; }
+  .dot:nth-child(3) { background: #5aa469; opacity: 0.85; }
+
+  .editor__file {
+    margin-left: 0.4rem;
+    font-family: ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace;
+    font-size: 0.78rem;
+    color: var(--muted);
+    letter-spacing: 0.01em;
+  }
+
+  .code {
+    padding: 1.25rem 1.35rem 0.4rem;
+    font-family: ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace;
+    font-size: clamp(0.82rem, 2.6vw, 0.98rem);
+    line-height: 1.7;
+    color: var(--ink);
+    min-height: 11.9rem; /* держим высоту, чтобы блок не «прыгал» пока печатается */
+  }
+
+  .code.shake { animation: shake 0.32s ease-in-out; }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-5px); }
+    40% { transform: translateX(5px); }
+    60% { transform: translateX(-3px); }
+    80% { transform: translateX(3px); }
+  }
+
+  .line {
+    white-space: pre;
+    min-height: 1.7em;
+  }
+
+  /* мигающая каретка на активной строке */
+  .line.active::after {
+    content: '';
+    display: inline-block;
+    width: 0.55ch;
+    height: 1.05em;
+    margin-left: 1px;
+    transform: translateY(0.16em);
+    background: var(--accent);
+    animation: caret 1s steps(1) infinite;
+  }
+  @keyframes caret { 50% { opacity: 0; } }
+
+  /* синтаксис */
+  .kw { color: var(--accent); }
+  .op { color: var(--muted); }
+  .prop { color: var(--ink); }
+  .str { color: #5f9e46; }
+  .fn { color: var(--ink); font-weight: 600; }
+
+  .status {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.85rem 1.35rem 1.15rem;
+    font-family: ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace;
+    font-size: 0.8rem;
+    color: var(--muted);
+    border-top: 1px solid var(--line-soft);
+    margin-top: 0.4rem;
+  }
+
+  .status__mark {
+    width: 0.6rem;
+    height: 0.6rem;
+    border-radius: 999px;
+    background: var(--muted);
+    flex: none;
+  }
+  .status.is-run .status__mark { background: var(--accent); animation: pulse 1s ease-in-out infinite; }
+  .status.is-error { color: #d64545; }
+  .status.is-error .status__mark { background: #d64545; }
+  .status.is-ok { color: #5aa469; }
+  .status.is-ok .status__mark { background: #5aa469; }
+
+  @keyframes pulse { 50% { opacity: 0.3; } }
+
+  :root[data-theme='dark'] .str { color: #8ac16f; }
+  :root[data-theme='dark'] .status.is-error,
+  :root[data-theme='dark'] .status.is-error .status__mark { color: #ef8a8a; }
+  :root[data-theme='dark'] .status.is-error .status__mark { background: #ef8a8a; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .editor { animation: none; }
+    .line.active::after { animation: none; }
+  }
+</style>

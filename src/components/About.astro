@@ -1,0 +1,94 @@
+---
+import SectionHead from './SectionHead.astro';
+import type { Dictionary } from '../i18n/types';
+
+interface Props {
+  dict: Dictionary;
+}
+
+const { dict } = Astro.props;
+const t = dict.about;
+---
+
+<section class="section" id="about">
+  <div class="container">
+    <SectionHead num="01" label={t.label} heading={t.heading} headingAccent={t.headingAccent} />
+
+    <div class="grid">
+      <div class="text" data-reveal>
+        {t.paragraphs.map((p) => <p>{p}</p>)}
+      </div>
+
+      <dl class="facts">
+        {
+          t.facts.map((fact, i) => (
+            <div class="fact" data-reveal style={`--reveal-delay: ${i * 0.1}s`}>
+              <dd class="value">{fact.value}</dd>
+              <dt class="label">{fact.label}</dt>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </div>
+</section>
+
+<style>
+  .grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+    gap: clamp(2.5rem, 6vw, 6rem);
+    align-items: start;
+  }
+
+  .text {
+    display: grid;
+    gap: 1.3rem;
+    font-size: clamp(1.05rem, 1.7vw, 1.2rem);
+    line-height: 1.75;
+    color: var(--muted);
+  }
+
+  .text :global(p:first-child) {
+    color: var(--ink);
+  }
+
+  .facts {
+    display: grid;
+    gap: 0;
+  }
+
+  .fact {
+    padding-block: 1.4rem;
+    border-top: 1px solid var(--line);
+    display: flex;
+    align-items: baseline;
+    gap: 1.2rem;
+  }
+
+  .fact:last-child {
+    border-bottom: 1px solid var(--line);
+  }
+
+  .value {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 600;
+    font-size: clamp(2.2rem, 4.5vw, 3.2rem);
+    line-height: 1;
+    color: var(--accent);
+    min-width: 4.2rem;
+  }
+
+  .label {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--muted);
+  }
+
+  @media (max-width: 840px) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

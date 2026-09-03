@@ -1,0 +1,76 @@
+---
+interface Props {
+  words: string[];
+}
+
+const { words } = Astro.props;
+---
+
+<div class="marquee" aria-hidden="true">
+  <div class="track">
+    {
+      [0, 1].map(() => (
+        <span class="group">
+          {words.map((word) => (
+            <>
+              <span class="word">{word}</span>
+              <span class="star">◆</span>
+            </>
+          ))}
+        </span>
+      ))
+    }
+  </div>
+</div>
+
+<style>
+  .marquee {
+    overflow: hidden;
+    border-block: 1px solid var(--line-soft);
+    padding-block: 1.1rem;
+    user-select: none;
+  }
+
+  .track {
+    display: flex;
+    width: max-content;
+    animation: slide 36s linear infinite;
+  }
+
+  .marquee:hover .track {
+    animation-play-state: paused;
+  }
+
+  .group {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  .word {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 500;
+    font-size: clamp(1.1rem, 2.4vw, 1.6rem);
+    color: var(--muted);
+    white-space: nowrap;
+    padding-inline: 1.6rem;
+  }
+
+  .star {
+    color: var(--accent);
+    font-size: 0.55rem;
+  }
+
+  @keyframes slide {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .track {
+      animation: none;
+    }
+  }
+</style>

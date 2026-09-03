@@ -1,0 +1,810 @@
+---
+interface Props {
+  token?: string;
+  lang?: 'ru' | 'en';
+}
+
+const { token = "dty_3f38291d1273a4fe24e0fd381f1c84f2", lang = 'ru' } = Astro.props;
+const isRu = lang === 'ru';
+const isUk = lang === 'uk';
+---
+
+<div id="dotify-widget" class="dotify-widget hidden" data-token={token}>
+  <!-- Full Glassmorphism Player Card -->
+  <div id="dotify-card" class="dotify-card">
+    <!-- User Profile Header with Clickable Link to Profile -->
+    <div class="profile-header">
+      <a href="https://share.dotify.fun/pr/Ponchik" target="_blank" rel="noopener noreferrer" class="user-avatar-wrap" title={isUk ? 'Відкрити профіль у Dotify' : isRu ? 'Открыть профиль в Dotify' : 'Open Dotify Profile'}>
+        <img id="user-avatar" src="https://github.com/Ponchik0.png" alt="User Avatar" class="user-avatar" />
+        <span class="status-dot"></span>
+      </a>
+
+      <div class="user-meta">
+        <div class="user-name-row">
+          <a href="https://share.dotify.fun/pr/Ponchik" target="_blank" rel="noopener noreferrer" id="user-name" class="user-name" title={isUk ? 'Відкрити профіль у Dotify' : isRu ? 'Открыть профиль в Dotify' : 'Open Dotify Profile'}>
+            Ponchik
+          </a>
+          <span id="user-title" class="user-title">ADMIN</span>
+        </div>
+        <a href="https://share.dotify.fun/pr/Ponchik" target="_blank" rel="noopener noreferrer" id="user-uid" class="user-uid">
+          UID: #345
+        </a>
+      </div>
+      
+      <!-- Audio Wave Equalizer -->
+      <div class="equalizer-bars" aria-hidden="true">
+        <span class="eq-bar eq-1"></span>
+        <span class="eq-bar eq-2"></span>
+        <span class="eq-bar eq-3"></span>
+        <span class="eq-bar eq-4"></span>
+      </div>
+
+      <!-- Minimize Button -->
+      <button id="dotify-minimize" class="dotify-toggle" title={isUk ? 'Згорнути плеєр' : isRu ? 'Свернуть плеер' : 'Minimize Player'} aria-label="Toggle player">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Main Player Content -->
+    <div class="dotify-body">
+      <!-- Static Album Cover Art (Clickable) -->
+      <a id="cover-link" href="https://dotify.fun" target="_blank" rel="noopener noreferrer" class="cover-wrapper" title={isUk ? 'Відкрити трек у джерелі' : isRu ? 'Открыть трек в источнике' : 'Open in Source'}>
+        <img id="track-cover" src="" alt="Album Cover" class="cover-img" />
+        <div class="cover-hover-overlay">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+            <polyline points="15 3 21 3 21 9"></polyline>
+            <line x1="10" y1="14" x2="21" y2="3"></line>
+          </svg>
+        </div>
+      </a>
+
+      <!-- Track Info with Direct Track Source Link -->
+      <div class="track-details">
+        <div class="track-title-wrapper">
+          <a id="track-link" href="https://dotify.fun" target="_blank" rel="noopener noreferrer" class="track-title" title={isUk ? 'Відкрити трек' : isRu ? 'Открыть трек' : 'Open Track'}>
+            Loading...
+          </a>
+        </div>
+        <p id="track-artist" class="track-artist">Dotify Player</p>
+        
+        <!-- Source Badge with Dynamic Brand Colors -->
+        <a id="source-badge-link" href="https://dotify.fun" target="_blank" rel="noopener noreferrer" class="track-source-badge source--dotify">
+          <svg id="source-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 18V5l12-2v13"></path>
+            <circle cx="6" cy="18" r="3"></circle>
+            <circle cx="18" cy="16" r="3"></circle>
+          </svg>
+          <span id="track-source">DOTIFY</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Progress Timeline -->
+    <div class="dotify-footer">
+      <div class="progress-bar-bg">
+        <div id="progress-bar-fill" class="progress-bar-fill" style="width: 0%;"></div>
+      </div>
+      <div class="time-row">
+        <span id="time-current">0:00</span>
+        <span id="time-duration">0:00</span>
+      </div>
+
+      <!-- Single Clear Action: Download Dotify.msi -->
+      <div class="player-actions">
+        <a id="btn-download-msi" href="https://dotify.fun/Dotify.msi" target="_blank" rel="noopener noreferrer" download="Dotify.msi" class="btn-action btn-download-full" title={isRu ? 'Скачать Dotify.msi' : 'Download Dotify.msi'}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          <span>{isUk ? 'Завантажити Dotify (Windows)' : isRu ? 'Скачать Dotify (Windows)' : 'Download Dotify (Windows)'}</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ultra-compact Minimized Floating Pill Badge -->
+  <div id="dotify-mini-pill" class="dotify-mini-pill hidden" title={isUk ? 'Розгорнути плеєр' : isRu ? 'Развернуть плеер' : 'Expand Player'}>
+    <a href="https://share.dotify.fun/pr/Ponchik" target="_blank" rel="noopener noreferrer" class="mini-avatar-wrap" title="Ponchik Profile">
+      <img id="mini-user-avatar" src="https://github.com/Ponchik0.png" alt="Avatar" class="mini-user-avatar" />
+      <span class="mini-status-dot"></span>
+    </a>
+    <div class="mini-cover-wrap">
+      <img id="mini-cover" src="" alt="" class="mini-cover-img" />
+    </div>
+    <div class="mini-info">
+      <span id="mini-title" class="mini-title">Track</span>
+    </div>
+    <div class="mini-eq">
+      <span class="m-eq m-1"></span>
+      <span class="m-eq m-2"></span>
+      <span class="m-eq m-3"></span>
+    </div>
+  </div>
+</div>
+
+<script>
+  const widget = document.getElementById('dotify-widget');
+  const token = widget?.dataset.token || 'dty_3f38291d1273a4fe24e0fd381f1c84f2';
+  const card = document.getElementById('dotify-card');
+  const miniPill = document.getElementById('dotify-mini-pill');
+  const cover = document.getElementById('track-cover') as HTMLImageElement;
+  const miniCover = document.getElementById('mini-cover') as HTMLImageElement;
+  const coverLink = document.getElementById('cover-link') as HTMLAnchorElement;
+  const titleLink = document.getElementById('track-link') as HTMLAnchorElement;
+  const sourceBadgeLink = document.getElementById('source-badge-link') as HTMLAnchorElement;
+  const userAvatar = document.getElementById('user-avatar') as HTMLImageElement;
+  const miniUserAvatar = document.getElementById('mini-user-avatar') as HTMLImageElement;
+  const userName = document.getElementById('user-name') as HTMLElement;
+  const userTitle = document.getElementById('user-title');
+  const userUid = document.getElementById('user-uid');
+  const miniTitle = document.getElementById('mini-title');
+  const artist = document.getElementById('track-artist');
+  const source = document.getElementById('track-source');
+  const progressFill = document.getElementById('progress-bar-fill');
+  const timeCurrent = document.getElementById('time-current');
+  const timeDuration = document.getElementById('time-duration');
+  const minimizeBtn = document.getElementById('dotify-minimize');
+
+  let currentPosMs = 0;
+  let durationMs = 0;
+  let isPlaying = false;
+  let isMinimized = false;
+
+  function formatTime(ms: number): string {
+    const totalSecs = Math.max(0, Math.floor(ms / 1000));
+    const mins = Math.floor(totalSecs / 60);
+    const secs = totalSecs % 60;
+    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+  }
+
+  function updateTimeline() {
+    if (isPlaying && durationMs > 0) {
+      currentPosMs += 1000;
+      if (currentPosMs > durationMs) currentPosMs = durationMs;
+      const pct = Math.min(100, (currentPosMs / durationMs) * 100);
+      if (progressFill) progressFill.style.width = `${pct}%`;
+      if (timeCurrent) timeCurrent.textContent = formatTime(currentPosMs);
+    }
+  }
+
+  function resolveSourceUrl(t: any): string {
+    const src = (t.source || '').toLowerCase();
+    const id = t.id || t.track_id || '';
+    const query = encodeURIComponent(`${t.artist || ''} ${t.title || ''}`.trim());
+
+    if (src === 'spotify' && id) {
+      return `https://open.spotify.com/track/${id}`;
+    }
+    if (src === 'soundcloud') {
+      return `https://soundcloud.com/search/sounds?q=${query}`;
+    }
+    if (src === 'youtube' && id) {
+      return `https://www.youtube.com/watch?v=${id}`;
+    }
+    if (src === 'yandex' && id) {
+      return `https://music.yandex.ru/track/${id}`;
+    }
+    if (src === 'vk') {
+      return `https://vk.com/audio?q=${query}`;
+    }
+    return `https://dotify.fun`;
+  }
+
+  function applySourceBadgeTheme(src: string) {
+    if (!sourceBadgeLink) return;
+    sourceBadgeLink.className = 'track-source-badge';
+    const s = src.toLowerCase();
+
+    if (s === 'spotify') {
+      sourceBadgeLink.classList.add('source--spotify');
+    } else if (s === 'soundcloud') {
+      sourceBadgeLink.classList.add('source--soundcloud');
+    } else if (s === 'youtube') {
+      sourceBadgeLink.classList.add('source--youtube');
+    } else if (s === 'vk') {
+      sourceBadgeLink.classList.add('source--vk');
+    } else if (s === 'yandex') {
+      sourceBadgeLink.classList.add('source--yandex');
+    } else {
+      sourceBadgeLink.classList.add('source--dotify');
+    }
+  }
+
+  async function fetchProfile() {
+    try {
+      const res = await fetch(`https://api.dotify.fun/oauth/profile?token=${token}`, {
+        headers: { 'Accept': 'application/json' }
+      });
+      if (res.ok) {
+        const p = await res.json();
+        if (p) {
+          if (p.avatar && userAvatar) userAvatar.src = p.avatar;
+          if (p.avatar && miniUserAvatar) miniUserAvatar.src = p.avatar;
+          if (p.username && userName) userName.textContent = p.username;
+          if (p.title && userTitle) userTitle.textContent = p.title.toUpperCase();
+          if (p.uid && userUid) userUid.textContent = `UID: #${p.uid}`;
+        }
+      }
+    } catch (e) {
+      // Retain defaults: UID #345, Admin, Ponchik
+    }
+  }
+
+  async function fetchNowPlaying() {
+    try {
+      const res = await fetch(`https://api.dotify.fun/oauth/now?token=${token}`, {
+        headers: { 'Accept': 'application/json' }
+      });
+      if (!res.ok) return;
+
+      const data = await res.json();
+      if (!data || !data.track) {
+        if (widget) widget.classList.add('hidden');
+        return;
+      }
+
+      const t = data.track;
+      isPlaying = data.is_playing ?? true;
+      currentPosMs = t.position_ms ?? data.position_ms ?? 0;
+      durationMs = t.duration_ms ?? (t.duration ? t.duration * 1000 : 0);
+
+      if (widget) widget.classList.remove('hidden');
+
+      if (cover && t.cover_art) cover.src = t.cover_art;
+      if (miniCover && t.cover_art) miniCover.src = t.cover_art;
+
+      const trackName = t.title || 'Unknown Track';
+      const artistName = t.artist || 'Unknown Artist';
+      const sourceKey = (t.source || 'dotify').toLowerCase();
+      const sourceName = sourceKey.toUpperCase();
+
+      const directUrl = resolveSourceUrl(t);
+
+      if (titleLink) {
+        titleLink.textContent = trackName;
+        titleLink.href = directUrl;
+        titleLink.title = `Слушать на ${sourceName} ↗`;
+      }
+      if (coverLink) {
+        coverLink.href = directUrl;
+      }
+      if (sourceBadgeLink) {
+        sourceBadgeLink.href = directUrl;
+      }
+
+      applySourceBadgeTheme(sourceKey);
+
+      if (miniTitle) miniTitle.textContent = `${trackName} • ${artistName}`;
+      if (artist) artist.textContent = artistName;
+      if (source) source.textContent = sourceName;
+
+      if (timeDuration) timeDuration.textContent = formatTime(durationMs);
+      if (timeCurrent) timeCurrent.textContent = formatTime(currentPosMs);
+      if (progressFill && durationMs > 0) {
+        progressFill.style.width = `${(currentPosMs / durationMs) * 100}%`;
+      }
+    } catch (err) {
+      console.warn('Dotify widget error:', err);
+    }
+  }
+
+  minimizeBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    isMinimized = true;
+    card?.classList.add('hidden');
+    miniPill?.classList.remove('hidden');
+  });
+
+  miniPill?.addEventListener('click', () => {
+    isMinimized = false;
+    card?.classList.remove('hidden');
+    miniPill?.classList.add('hidden');
+  });
+
+  fetchProfile();
+  fetchNowPlaying();
+  setInterval(fetchNowPlaying, 5000);
+  setInterval(updateTimeline, 1000);
+</script>
+
+<style>
+  .dotify-widget {
+    position: fixed;
+    bottom: 1.5rem;
+    left: 1.5rem;
+    z-index: 999;
+    font-family: var(--font-sans);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+  }
+
+  .dotify-widget.hidden {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(20px) scale(0.95);
+  }
+
+  /* Full Card */
+  .dotify-card {
+    background: rgba(28, 27, 23, 0.94);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid var(--line-soft);
+    border-radius: 1.25rem;
+    padding: 1.05rem 1.25rem;
+    width: clamp(310px, 25vw, 370px);
+    box-shadow: 0 24px 48px -15px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.05);
+    color: var(--ink);
+  }
+
+  .dotify-card.hidden {
+    display: none;
+  }
+
+  /* User Profile Header */
+  .profile-header {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    margin-bottom: 0.85rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid var(--line-soft);
+  }
+
+  .user-avatar-wrap {
+    position: relative;
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    display: block;
+    transition: transform 0.2s ease;
+  }
+
+  .user-avatar-wrap:hover {
+    transform: scale(1.08);
+  }
+
+  .user-avatar {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1.5px solid var(--line-soft);
+  }
+
+  .status-dot {
+    position: absolute;
+    bottom: -1px;
+    right: -1px;
+    width: 9px;
+    height: 9px;
+    background: #10b981;
+    border: 1.5px solid #1c1b17;
+    border-radius: 50%;
+    box-shadow: 0 0 8px #10b981;
+  }
+
+  .user-meta {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .user-name-row {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .user-name {
+    font-size: 0.88rem;
+    font-weight: 800;
+    color: var(--ink);
+    line-height: 1.1;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .user-name:hover {
+    color: var(--accent);
+  }
+
+  .user-title {
+    font-size: 0.62rem;
+    font-weight: 800;
+    padding: 0.1rem 0.45rem;
+    border-radius: 4px;
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(220, 38, 38, 0.1));
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    color: #f87171;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .user-uid {
+    font-size: 0.68rem;
+    color: var(--muted);
+    font-weight: 700;
+    margin-top: 1px;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .user-uid:hover {
+    color: var(--ink);
+  }
+
+  /* Audio Wave Equalizer */
+  .equalizer-bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 2.5px;
+    height: 12px;
+    margin-left: auto;
+    margin-right: 0.5rem;
+  }
+
+  .eq-bar {
+    width: 2.5px;
+    background: var(--accent);
+    border-radius: 99px;
+    animation: eq-bounce 1.2s infinite ease-in-out alternate;
+  }
+  .eq-1 { height: 35%; animation-delay: 0.1s; }
+  .eq-2 { height: 90%; animation-delay: 0.3s; }
+  .eq-3 { height: 60%; animation-delay: 0.2s; }
+  .eq-4 { height: 100%; animation-delay: 0.4s; }
+
+  @keyframes eq-bounce {
+    0% { height: 20%; }
+    100% { height: 100%; }
+  }
+
+  .dotify-toggle {
+    background: var(--line-soft);
+    border: 1px solid var(--line-soft);
+    color: var(--muted);
+    cursor: pointer;
+    padding: 0.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    transition: all 0.2s;
+  }
+
+  .dotify-toggle:hover {
+    color: var(--ink);
+    border-color: var(--line);
+  }
+
+  .dotify-body {
+    display: flex;
+    align-items: center;
+    gap: 0.95rem;
+    margin-bottom: 0.85rem;
+  }
+
+  /* Static Album Cover Art */
+  .cover-wrapper {
+    position: relative;
+    flex-shrink: 0;
+    width: 58px;
+    height: 58px;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    border: 1px solid var(--line-soft);
+    background: #000000;
+    display: block;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.4);
+    transition: transform 0.3s var(--ease-out), border-color 0.2s;
+  }
+
+  .cover-wrapper:hover {
+    transform: scale(1.05);
+    border-color: var(--accent);
+  }
+
+  .cover-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .cover-hover-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .cover-wrapper:hover .cover-hover-overlay {
+    opacity: 1;
+  }
+
+  /* Track Details */
+  .track-details {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .track-title-wrapper {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .track-title {
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: var(--ink);
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    transition: color 0.2s, text-decoration-color 0.2s;
+  }
+
+  .track-title:hover {
+    color: var(--accent);
+    text-decoration-color: var(--accent);
+  }
+
+  .track-artist {
+    font-size: 0.82rem;
+    color: var(--muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-top: 0.15rem;
+  }
+
+  /* Dynamic Source Badge Colors */
+  .track-source-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.66rem;
+    font-weight: 800;
+    padding: 0.15rem 0.55rem;
+    border-radius: 99px;
+    margin-top: 0.4rem;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: transform 0.2s, opacity 0.2s;
+  }
+
+  .track-source-badge:hover {
+    transform: scale(1.05);
+    opacity: 0.9;
+  }
+
+  /* Spotify (Green) */
+  .source--spotify {
+    background: rgba(29, 185, 84, 0.15);
+    border: 1px solid rgba(29, 185, 84, 0.45);
+    color: #1ed760;
+    box-shadow: 0 0 10px rgba(29, 185, 84, 0.15);
+  }
+
+  /* SoundCloud (Orange) */
+  .source--soundcloud {
+    background: rgba(255, 85, 0, 0.15);
+    border: 1px solid rgba(255, 85, 0, 0.45);
+    color: #ff5500;
+    box-shadow: 0 0 10px rgba(255, 85, 0, 0.15);
+  }
+
+  /* YouTube (Red) */
+  .source--youtube {
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.45);
+    color: #ef4444;
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.15);
+  }
+
+  /* VK (Blue) */
+  .source--vk {
+    background: rgba(0, 119, 255, 0.15);
+    border: 1px solid rgba(0, 119, 255, 0.45);
+    color: #0077ff;
+  }
+
+  /* Yandex (Amber) */
+  .source--yandex {
+    background: rgba(252, 63, 29, 0.15);
+    border: 1px solid rgba(252, 63, 29, 0.45);
+    color: #fc3f1d;
+  }
+
+  /* Default Dotify */
+  .source--dotify {
+    background: var(--accent-soft);
+    border: 1px solid var(--accent-soft);
+    color: var(--accent);
+  }
+
+  /* Progress Timeline */
+  .dotify-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .progress-bar-bg {
+    width: 100%;
+    height: 4px;
+    background: var(--line-soft);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 99px;
+    transition: width 0.4s linear;
+  }
+
+  .time-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.7rem;
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  /* Action Buttons */
+  .player-actions {
+    display: flex;
+    margin-top: 0.35rem;
+  }
+
+  .btn-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    padding: 0.45rem 1rem;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    width: 100%;
+    transition: all 0.2s var(--ease-out);
+  }
+
+  .btn-download-full {
+    background: var(--accent);
+    color: var(--bg);
+    border: 1px solid var(--accent);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+
+  .btn-download-full:hover {
+    opacity: 0.92;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+  }
+
+  /* ── Ultra-Compact Minimized Pill ── */
+  .dotify-mini-pill {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    background: rgba(28, 27, 23, 0.94);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid var(--line-soft);
+    border-radius: 999px;
+    padding: 0.32rem 0.85rem 0.32rem 0.35rem;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4);
+    cursor: pointer;
+    max-width: 270px;
+    transition: all 0.25s var(--ease-out);
+  }
+
+  .dotify-mini-pill:hover {
+    transform: translateY(-2px);
+    border-color: var(--accent);
+  }
+
+  .dotify-mini-pill.hidden {
+    display: none;
+  }
+
+  .mini-avatar-wrap {
+    position: relative;
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+    display: block;
+  }
+
+  .mini-user-avatar {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .mini-status-dot {
+    position: absolute;
+    bottom: -1px;
+    right: -1px;
+    width: 6px;
+    height: 6px;
+    background: #10b981;
+    border: 1px solid #1c1b17;
+    border-radius: 50%;
+  }
+
+  .mini-cover-wrap {
+    width: 22px;
+    height: 22px;
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid var(--line-soft);
+    flex-shrink: 0;
+  }
+
+  .mini-cover-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .mini-info {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .mini-title {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--ink);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .mini-eq {
+    display: flex;
+    align-items: flex-end;
+    gap: 2px;
+    height: 10px;
+    flex-shrink: 0;
+  }
+
+  .m-eq {
+    width: 2px;
+    background: var(--accent);
+    border-radius: 99px;
+    animation: eq-bounce 1s infinite alternate;
+  }
+  .m-1 { height: 40%; animation-delay: 0.1s; }
+  .m-2 { height: 90%; animation-delay: 0.25s; }
+  .m-3 { height: 60%; animation-delay: 0.15s; }
+
+  @media (max-width: 640px) {
+    .dotify-widget {
+      left: 1rem;
+      bottom: 1rem;
+      right: 1rem;
+    }
+    .dotify-card {
+      width: 100%;
+    }
+  }
+</style>

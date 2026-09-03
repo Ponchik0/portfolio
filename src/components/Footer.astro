@@ -1,0 +1,60 @@
+---
+import type { Dictionary } from '../i18n/types';
+
+interface Props {
+  dict: Dictionary;
+}
+
+const { dict } = Astro.props;
+const year = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="container footer-inner">
+    <p class="copy">© {year} {dict.hero.name}. {dict.footer.rights}.</p>
+    <a class="top" href="#">
+      {dict.footer.top}
+      <svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <path d="M8 13V3M3.5 7.5 8 3l4.5 4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+      </svg>
+    </a>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    border-top: 1px solid var(--line-soft);
+    padding-block: 2rem;
+    margin-top: calc(var(--section-gap) / 2);
+  }
+
+  .footer-inner {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.8rem;
+    font-size: 0.875rem;
+    color: var(--muted);
+  }
+
+  .top {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-weight: 700;
+    transition: color 0.2s;
+  }
+
+  .top:hover {
+    color: var(--accent);
+  }
+
+  .top svg {
+    transition: transform 0.3s var(--ease-out);
+  }
+
+  .top:hover svg {
+    transform: translateY(-2px);
+  }
+</style>

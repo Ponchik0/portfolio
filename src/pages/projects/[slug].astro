@@ -1,0 +1,12 @@
+---
+import CaseStudy from '../../components/CaseStudy.astro';
+import { getDict } from '../../i18n';
+
+export function getStaticPaths() {
+  return getDict('en').projects.items.map((p) => ({ params: { slug: p.slug } }));
+}
+
+const { slug } = Astro.params;
+---
+
+<CaseStudy lang="en" slug={slug!} />
