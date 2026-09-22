@@ -136,31 +136,6 @@ const counts = {
                               </button>
                             ))}
                           </div>
-
-                          <div class="card-nav-arrows">
-                            <button 
-                              type="button" 
-                              class="card-nav-arrow card-nav-arrow--prev" 
-                              data-card-prev 
-                              title="Previous screenshot"
-                              aria-label="Previous screenshot"
-                            >
-                              <svg width="11" height="11" viewBox="0 0 16 16" fill="none">
-                                <path d="M10 13 5 8l5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                              </svg>
-                            </button>
-                            <button 
-                              type="button" 
-                              class="card-nav-arrow card-nav-arrow--next" 
-                              data-card-next 
-                              title="Next screenshot"
-                              aria-label="Next screenshot"
-                            >
-                              <svg width="11" height="11" viewBox="0 0 16 16" fill="none">
-                                <path d="m6 3 5 5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                              </svg>
-                            </button>
-                          </div>
                         </div>
                       </div>
                     ) : project.image ? (
@@ -351,8 +326,6 @@ const counts = {
     const track = carousel.querySelector<HTMLElement>('[data-card-track]');
     const slides = carousel.querySelectorAll<HTMLElement>('[data-card-slide]');
     const segments = carousel.querySelectorAll<HTMLButtonElement>('[data-card-segment]');
-    const prevBtn = carousel.querySelector<HTMLButtonElement>('[data-card-prev]');
-    const nextBtn = carousel.querySelector<HTMLButtonElement>('[data-card-next]');
     const link = carousel.closest('a');
     const total = slides.length;
     if (total <= 1 || !track) return;
@@ -410,20 +383,6 @@ const counts = {
         activeSeg.classList.add('is-paused');
       }
     };
-
-    prevBtn?.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      setSlide(activeIdx - 1);
-      startTimer();
-    });
-
-    nextBtn?.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      setSlide(activeIdx + 1);
-      startTimer();
-    });
 
     segments.forEach((seg, idx) => {
       seg.addEventListener('click', (e) => {
@@ -547,7 +506,6 @@ const counts = {
   .tab:hover {
     border-color: var(--line);
     color: var(--ink);
-    transform: translateY(-2px);
   }
 
   .tab.active {
@@ -639,9 +597,8 @@ const counts = {
   }
 
   .project:hover .visual {
-    transform: translateY(-6px);
     border-color: var(--line);
-    box-shadow: 0 24px 48px -24px rgba(25, 23, 18, 0.25);
+    box-shadow: 0 20px 48px -20px rgba(25, 23, 18, 0.22);
   }
 
   .project:hover .visual::after {
@@ -736,11 +693,6 @@ const counts = {
     object-position: top center;
   }
 
-  .project:hover .visual-img {
-    transform: scale(1.04);
-  }
-
-  /* ── Homepage Card Carousel (Drag Ribbon & Story Timeline) ── */
   /* ── Homepage Card Carousel (Smooth & Clean, No Slop) ── */
   .card-carousel {
     position: relative;
@@ -777,13 +729,12 @@ const counts = {
   }
   .card-carousel-bar {
     position: absolute;
-    bottom: 0.65rem;
-    left: 0.8rem;
-    right: 0.8rem;
+    bottom: 0.75rem;
+    left: 0.85rem;
+    right: 0.85rem;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 0.6rem;
+    justify-content: center;
     z-index: 5;
     pointer-events: none;
   }
@@ -792,8 +743,8 @@ const counts = {
     align-items: center;
     gap: 0.35rem;
     pointer-events: auto;
-    flex: 1;
-    max-width: 6.5rem;
+    width: 100%;
+    max-width: 7.5rem;
   }
   .card-timeline-seg {
     flex: 1;
@@ -832,34 +783,6 @@ const counts = {
   }
   .card-timeline-seg.is-paused .card-timeline-fill {
     transition: none !important;
-  }
-  .card-nav-arrows {
-    display: flex;
-    align-items: center;
-    gap: 0.3rem;
-    pointer-events: auto;
-    opacity: 0;
-    transition: opacity 0.25s ease;
-  }
-  .project:hover .card-nav-arrows {
-    opacity: 1;
-  }
-  .card-nav-arrow {
-    display: grid;
-    place-items: center;
-    width: 1.65rem;
-    height: 1.65rem;
-    border-radius: 4px;
-    background: rgba(15, 14, 12, 0.72);
-    color: #fff;
-    border: 1px solid rgba(255, 255, 255, 0.16);
-    backdrop-filter: blur(6px);
-    cursor: pointer;
-    transition: background 0.2s ease, border-color 0.2s ease;
-  }
-  .card-nav-arrow:hover {
-    background: var(--accent);
-    border-color: var(--accent);
   }
 
   .flagship-badge {
