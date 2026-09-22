@@ -130,13 +130,6 @@ const slides = (project.gallery && project.gallery.length > 0)
                   </div>
                 ))}
               </div>
-
-              <!-- Subtle drag cue on desktop -->
-              <div class="carousel-drag-cue" aria-hidden="true">
-                <span class="cue-arrow">←</span>
-                <span class="cue-label">DRAG</span>
-                <span class="cue-arrow">→</span>
-              </div>
             </div>
 
             <!-- Slide Info and Story Timeline Bar (NO CIRCLES!) -->
@@ -356,7 +349,7 @@ const slides = (project.gallery && project.gallery.length > 0)
     currentSlide = (index + totalSlides) % totalSlides;
 
     if (animate) {
-      track.style.transition = 'transform 0.45s cubic-bezier(0.22, 1, 0.36, 1)';
+      track.style.transition = 'transform 0.5s cubic-bezier(0.25, 1, 0.35, 1)';
     } else {
       track.style.transition = 'none';
     }
@@ -385,8 +378,24 @@ const slides = (project.gallery && project.gallery.length > 0)
     if (activeSlide) {
       const title = activeSlide.dataset.galleryTitle || '';
       const caption = activeSlide.dataset.galleryCaption || '';
-      if (carouselTitle) carouselTitle.textContent = title;
-      if (carouselCaption) carouselCaption.textContent = caption;
+      if (carouselTitle && carouselTitle.textContent !== title) {
+        carouselTitle.style.opacity = '0';
+        setTimeout(() => {
+          if (carouselTitle) {
+            carouselTitle.textContent = title;
+            carouselTitle.style.opacity = '1';
+          }
+        }, 120);
+      }
+      if (carouselCaption && carouselCaption.textContent !== caption) {
+        carouselCaption.style.opacity = '0';
+        setTimeout(() => {
+          if (carouselCaption) {
+            carouselCaption.textContent = caption;
+            carouselCaption.style.opacity = '1';
+          }
+        }, 120);
+      }
       if (carouselCounter) carouselCounter.textContent = `${currentSlide + 1} / ${totalSlides}`;
     }
   }
@@ -397,7 +406,7 @@ const slides = (project.gallery && project.gallery.length > 0)
     setCarouselSlide(currentSlide);
     autoPlayTimer = window.setInterval(() => {
       setCarouselSlide(currentSlide + 1);
-    }, 5500);
+    }, 5000);
   }
 
   function stopAutoPlay() {
@@ -773,7 +782,7 @@ const slides = (project.gallery && project.gallery.length > 0)
     width: 100%;
     overflow: hidden;
     background: #090a0d;
-    cursor: grab;
+    cursor: pointer;
     user-select: none;
     -webkit-user-select: none;
     touch-action: pan-y;
@@ -786,7 +795,7 @@ const slides = (project.gallery && project.gallery.length > 0)
     flex-direction: row;
     width: 100%;
     will-change: transform;
-    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: transform 0.5s cubic-bezier(0.25, 1, 0.35, 1);
   }
   .carousel-slide {
     flex: 0 0 100%;
@@ -798,7 +807,7 @@ const slides = (project.gallery && project.gallery.length > 0)
   .carousel-img-container {
     width: 100%;
     position: relative;
-    cursor: zoom-in;
+    cursor: pointer;
   }
   .carousel-slide-img {
     display: block;
@@ -812,37 +821,6 @@ const slides = (project.gallery && project.gallery.length > 0)
   }
   .carousel-stage:hover .carousel-slide-img {
     transform: scale(1.012);
-  }
-
-  /* ── Drag Cue Pill (Subtle desktop hint) ── */
-  .carousel-drag-cue {
-    position: absolute;
-    bottom: 1rem;
-    left: 50%;
-    transform: translateX(-50%) translateY(4px);
-    z-index: 5;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.3rem 0.8rem;
-    border-radius: 6px;
-    background: rgba(18, 17, 14, 0.72);
-    backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.16);
-    color: rgba(255, 255, 255, 0.82);
-    font-size: 0.68rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.3s ease, transform 0.3s ease;
-  }
-  .case-carousel:hover .carousel-drag-cue {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
-  .carousel-stage.is-dragging .carousel-drag-cue {
-    opacity: 0;
   }
 
   /* ── Info & Story Timeline Bar ── */
@@ -865,13 +843,14 @@ const slides = (project.gallery && project.gallery.length > 0)
     letter-spacing: -0.015em;
     color: var(--ink);
     margin: 0;
-    transition: color 0.2s ease;
+    transition: opacity 0.2s ease;
   }
   .carousel-slide-caption {
     font-size: 0.88rem;
     line-height: 1.5;
     color: var(--muted);
     margin: 0.35rem 0 0;
+    transition: opacity 0.2s ease;
   }
 
   .carousel-nav-group {
@@ -926,7 +905,7 @@ const slides = (project.gallery && project.gallery.length > 0)
   }
   .case-timeline-seg.is-active .case-timeline-fill {
     transform: scaleX(1);
-    transition: transform 5.5s linear;
+    transition: transform 5s linear;
   }
   .case-timeline-seg.is-paused .case-timeline-fill {
     transition: none !important;
@@ -983,9 +962,6 @@ const slides = (project.gallery && project.gallery.length > 0)
       flex: 1;
       overflow-x: auto;
       padding-bottom: 0.25rem;
-    }
-    .carousel-drag-cue {
-      display: none;
     }
   }
 
