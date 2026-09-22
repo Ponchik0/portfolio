@@ -18,6 +18,17 @@ export interface Challenge {
   text: string;
 }
 
+export interface ProjectImage {
+  /** Path relative to public/, for example 'projects/zoovix/home.png'. */
+  src: string;
+  /** Concise description of the screen for visitors using assistive technology. */
+  alt: string;
+  /** Concise heading for the UI screen in the gallery */
+  title?: string;
+  /** Explanatory caption highlighting UI/UX or architectural solutions */
+  caption?: string;
+}
+
 export interface Project {
   /** Часть URL страницы кейса: /projects/<slug>/ */
   slug: string;
@@ -43,6 +54,8 @@ export interface Project {
    * например 'projects/zoovix.png'. Без него — стильная заглушка.
    */
   image?: string;
+  /** Additional project screens shown on the case-study page. */
+  gallery?: ProjectImage[];
   /** Контент отдельной страницы кейса */
   details: {
     intro: string[];
@@ -113,6 +126,7 @@ export interface Dictionary {
     caseFeatures: string;
     caseChallenges: string;
     caseStack: string;
+    caseGallery: string;
     caseBack: string;
     caseNext: string;
     categories?: {

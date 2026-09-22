@@ -1,5 +1,5 @@
 ---
-import { homePath, type Lang } from '../i18n';
+import { homePath, projectPath, type Lang } from '../i18n';
 import type { Dictionary } from '../i18n/types';
 
 interface Props {
@@ -8,9 +8,11 @@ interface Props {
   /** Префикс для якорных ссылок. Пусто на главной ('#about'); на под-страницах
       передаём homePath(lang), чтобы ссылки вели на секции главной ('/#about'). */
   sectionBase?: string;
+  /** Если передан slug проекта, ссылки языков переключают на тот же кейс */
+  projectSlug?: string;
 }
 
-const { lang, dict, sectionBase = '' } = Astro.props;
+const { lang, dict, sectionBase = '', projectSlug } = Astro.props;
 
 const navItems = [
   { href: `${sectionBase}#about`, id: 'about', label: dict.nav.about },
@@ -36,15 +38,15 @@ const navItems = [
     <div class="controls">
       <div class="pill">
         <div class="lang" role="group" aria-label="Language">
-          <a class:list={['lang-link', { active: lang === 'en' }]} href={homePath('en')}
+          <a class:list={['lang-link', { active: lang === 'en' }]} href={projectSlug ? projectPath('en', projectSlug) : homePath('en')}
             aria-current={lang === 'en' ? 'page' : undefined}>EN</a
           >
           <span class="lang-sep" aria-hidden="true">/</span>
-          <a class:list={['lang-link', { active: lang === 'uk' }]} href={homePath('uk')}
+          <a class:list={['lang-link', { active: lang === 'uk' }]} href={projectSlug ? projectPath('uk', projectSlug) : homePath('uk')}
             aria-current={lang === 'uk' ? 'page' : undefined}>UA</a
           >
           <span class="lang-sep" aria-hidden="true">/</span>
-          <a class:list={['lang-link', { active: lang === 'ru' }]} href={homePath('ru')}
+          <a class:list={['lang-link', { active: lang === 'ru' }]} href={projectSlug ? projectPath('ru', projectSlug) : homePath('ru')}
             aria-current={lang === 'ru' ? 'page' : undefined}>RU</a
           >
         </div>

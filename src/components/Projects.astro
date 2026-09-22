@@ -73,17 +73,63 @@ const counts = {
               data-category={project.category || 'web'}
               style={isDefaultHidden ? 'display: none;' : ''}
             >
-              <div class="visual">
-                {project.image ? (
-                  <img src={withBase(project.image)} alt={project.title} loading="lazy" class="visual-img" />
-                ) : (
-                  <div class="placeholder" aria-hidden="true">
-                    <span class="ph-index">{String(i + 1).padStart(2, '0')}</span>
-                    <span class="ph-ring" />
-                    <span class="ph-ring ph-ring--2" />
+              {project.details ? (
+                <a 
+                  href={projectPath(lang, project.slug)} 
+                  class={`visual visual--${project.category || 'web'} visual--link ${project.slug === 'poezdato' ? 'visual--light-screen' : ''}`}
+                  aria-label={`${t.caseLink}: ${project.title}`}
+                >
+                  {project.category === 'web' && (
+                    <div class="browser-frame-bar" aria-hidden="true">
+                      <div class="browser-dots">
+                        <span class="browser-dot browser-dot--red" />
+                        <span class="browser-dot browser-dot--yellow" />
+                        <span class="browser-dot browser-dot--green" />
+                      </div>
+                      <div class="browser-url-pill">
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                        <span>{project.slug === 'zoovix' ? 'zoovix.fun' : 'poizdato.net'}</span>
+                      </div>
+                    </div>
+                  )}
+
+                  <div class="visual-body">
+                    {project.image ? (
+                      <img src={withBase(project.image)} alt={`Preview of ${project.title}`} loading="lazy" class="visual-img" />
+                    ) : (
+                      <div class="placeholder" aria-hidden="true">
+                        <span class="ph-index">{String(i + 1).padStart(2, '0')}</span>
+                        <span class="ph-ring" />
+                        <span class="ph-ring ph-ring--2" />
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
+
+                  <span class="visual-hover-badge" aria-hidden="true">
+                    <span>{t.caseLink}</span>
+                    <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+                      <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                  </span>
+                </a>
+              ) : (
+                <div class={`visual visual--${project.category || 'web'}`}>
+                  <div class="visual-body">
+                    {project.image ? (
+                      <img src={withBase(project.image)} alt={`Preview of ${project.title}`} loading="lazy" class="visual-img" />
+                    ) : (
+                      <div class="placeholder" aria-hidden="true">
+                        <span class="ph-index">{String(i + 1).padStart(2, '0')}</span>
+                        <span class="ph-ring" />
+                        <span class="ph-ring ph-ring--2" />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
 
               <div class="info">
                 <header class="head">
@@ -327,7 +373,7 @@ const counts = {
     order: 2;
   }
 
-  /* ── Visual Container & Image Framing ── */
+  /* ── Visual Container & Interactive Browser Framing ── */
   .visual {
     position: relative;
     border-radius: 1.25rem;
@@ -336,15 +382,113 @@ const counts = {
     aspect-ratio: 4 / 3;
     background: var(--bg-elev);
     display: flex;
-    align-items: center;
-    justify-content: center;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
     transition: transform 0.6s var(--ease-out), box-shadow 0.6s var(--ease-out), border-color 0.4s;
+    isolation: isolate;
+  }
+
+  .visual--link {
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  .visual::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), transparent 35%, rgba(0, 0, 0, 0.1));
+    opacity: 0.5;
+    transition: opacity 0.6s var(--ease-out);
   }
 
   .project:hover .visual {
     transform: translateY(-6px);
     border-color: var(--line);
     box-shadow: 0 24px 48px -24px rgba(25, 23, 18, 0.25);
+  }
+
+  .project:hover .visual::after {
+    opacity: 0;
+  }
+
+  .visual--web {
+    aspect-ratio: 16 / 10;
+    background: #0d0e12;
+  }
+
+  .visual--light-screen {
+    background: #f4f6f4;
+  }
+
+  .browser-frame-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.55rem 0.85rem;
+    background: rgba(25, 23, 18, 0.06);
+    border-bottom: 1px solid var(--line-soft);
+    position: relative;
+    z-index: 3;
+    flex-shrink: 0;
+  }
+
+  :root[data-theme='dark'] .browser-frame-bar {
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+  .browser-dots {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .browser-dot {
+    width: 0.42rem;
+    height: 0.42rem;
+    border-radius: 50%;
+    opacity: 0.8;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+
+  .project:hover .browser-dot {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+
+  .browser-dot--red { background: #ff5f56; }
+  .browser-dot--yellow { background: #ffbd2e; }
+  .browser-dot--green { background: #27c93f; }
+
+  .browser-url-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.12rem 0.6rem;
+    border-radius: 999px;
+    background: var(--bg);
+    border: 1px solid var(--line-soft);
+    font-size: 0.68rem;
+    font-family: var(--font-sans);
+    color: var(--muted);
+    letter-spacing: 0.02em;
+    margin-left: auto;
+    margin-right: auto;
+    transform: translateX(-0.8rem);
+  }
+
+  .visual-body {
+    position: relative;
+    width: 100%;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .visual-img {
@@ -355,8 +499,39 @@ const counts = {
     transition: transform 0.6s var(--ease-out);
   }
 
+  .visual--web .visual-img {
+    object-position: top center;
+  }
+
   .project:hover .visual-img {
-    transform: scale(1.05);
+    transform: scale(1.04);
+  }
+
+  .visual-hover-badge {
+    position: absolute;
+    bottom: 0.85rem;
+    right: 0.85rem;
+    z-index: 4;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.85rem;
+    border-radius: 999px;
+    background: var(--ink);
+    color: var(--bg);
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    box-shadow: 0 12px 28px -6px rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    transform: translateY(0.35rem);
+    transition: opacity 0.3s var(--ease-out), transform 0.3s var(--ease-out);
+    pointer-events: none;
+  }
+
+  .project:hover .visual-hover-badge {
+    opacity: 1;
+    transform: translateY(0);
   }
 
   .flagship-badge {

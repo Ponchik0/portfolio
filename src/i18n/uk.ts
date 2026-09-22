@@ -64,6 +64,7 @@ export const uk: Dictionary = {
     caseFeatures: 'Ключові можливості',
     caseChallenges: 'Цікаві виклики',
     caseStack: 'Стек',
+    caseGallery: 'Інтерфейс проєкту',
     caseBack: 'Усі проєкти',
     caseNext: 'Наступний проєкт',
     categories: {
@@ -99,7 +100,27 @@ export const uk: Dictionary = {
         links: [
           { label: 'GitHub', url: 'https://github.com/Ponchik0/Zoovix' },
         ],
-        image: 'projects/zoovix.jpg',
+        image: 'projects/zoovix/home.webp',
+        gallery: [
+          {
+            src: 'projects/zoovix/home.webp',
+            alt: 'Головний екран Zoovix із добірками фільмів та hero-банером',
+            title: 'Головна вітрина та стрімінг-хаб',
+            caption: 'Динамічний hero-банер премʼєр, каруселі очікуваних новинок, швидкий доступ до перегляду та тематичні добірки.'
+          },
+          {
+            src: 'projects/zoovix/catalog.webp',
+            alt: 'Каталог фільмів Zoovix із розумними фільтрами',
+            title: 'Розумний каталог та мультифільтри',
+            caption: 'Миттєва фільтрація за жанрами, роками випуску, рейтингом TMDB, пошуковий рядок та алгоритми сортування.'
+          },
+          {
+            src: 'projects/zoovix/film-detail.webp',
+            alt: 'Сторінка фільму Zoovix з керуванням переглядом і статистикою',
+            title: 'Картка фільму та медіаплеєр',
+            caption: 'Кінематографічна сторінка тайтла: синопсис, вибір відеопотоків та озвучень, трейлери та аналітика переглядів.'
+          },
+        ],
         details: {
           intro: [
             'Zoovix — масштабний каталог фільмів, серіалів та аніме, який я створюю самостійно: архітектура, дизайн, бекенд і деплой.',
@@ -141,7 +162,21 @@ export const uk: Dictionary = {
         links: [
           { label: 'GitHub', url: 'https://github.com/Ponchik0' },
         ],
-        image: 'projects/poezdato.png',
+        image: 'projects/poezdato/search.webp',
+        gallery: [
+          {
+            src: 'projects/poezdato/search.webp',
+            alt: 'Головний екран пошуку маршрутів Поїздато',
+            title: 'Пошук та планування маршруту',
+            caption: 'Лаконічний пошук з автодоповненням станцій України, швидким реверсом напрямку та історією недавніх запитів.'
+          },
+          {
+            src: 'projects/poezdato/timetable.webp',
+            alt: 'Живий розклад Поїздато з часом відправлення поїздів',
+            title: 'Інтерактивне табло розкладу',
+            caption: 'Актуальні дані poizdato.net: типи поїздів (пасажирські / електрички), час у дорозі та зворотний відлік до відправлення.'
+          },
+        ],
         details: {
           intro: [
             '«Поїздато» — це повноцінний концепт редизайну застарілого інтерфейсу сервісу розкладів руху поїздів та приміських електричок poizdato.net.',

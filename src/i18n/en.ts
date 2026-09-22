@@ -99,7 +99,27 @@ export const en: Dictionary = {
         links: [
           { label: 'GitHub', url: 'https://github.com/Ponchik0/Zoovix' },
         ],
-        image: 'projects/zoovix.jpg',
+        image: 'projects/zoovix/home.webp',
+        gallery: [
+          {
+            src: 'projects/zoovix/home.webp',
+            alt: 'Zoovix home screen with featured premiere banner and collections',
+            title: 'Home Showcase & Streaming Hub',
+            caption: 'Dynamic premiere hero banner, upcoming releases carousels, instant playback launch, and curated mood collections.'
+          },
+          {
+            src: 'projects/zoovix/catalog.webp',
+            alt: 'Zoovix movie catalog with smart genre and year filters',
+            title: 'Smart Catalog & Multi-Filters',
+            caption: 'Instant filtering by genre, release year, TMDB rating, live search input, and sorting algorithms.'
+          },
+          {
+            src: 'projects/zoovix/film-detail.webp',
+            alt: 'Zoovix movie detail page with playback controls and stats',
+            title: 'Title Detail & Media Player',
+            caption: 'Cinematic title overview: synopsis, audio track and streaming source selection, trailers, and viewer analytics.'
+          },
+        ],
         details: {
           intro: [
             'Zoovix is a next-generation cinema catalog with gamification and watch-parties, crafted end-to-end by me.',
@@ -141,7 +161,21 @@ export const en: Dictionary = {
         links: [
           { label: 'GitHub', url: 'https://github.com/Ponchik0' },
         ],
-        image: 'projects/poezdato.png',
+        image: 'projects/poezdato/search.webp',
+        gallery: [
+          {
+            src: 'projects/poezdato/search.webp',
+            alt: 'Poezdato route search and planning interface',
+            title: 'Route Search & Station Autocomplete',
+            caption: 'Streamlined search interface with instant autocomplete for Ukrainian stations, one-tap direction reversal, and query history.'
+          },
+          {
+            src: 'projects/poezdato/timetable.webp',
+            alt: 'Poezdato live timetable with train departure times and status',
+            title: 'Live Timetable & Departures Board',
+            caption: 'Live timetable feed: train categories (express / commuter rail), travel duration, and departure countdown timer.'
+          },
+        ],
         details: {
           intro: [
             'Poezdato is a complete modern redesign concept for the popular Ukrainian railway transit timetable service poizdato.net.',
