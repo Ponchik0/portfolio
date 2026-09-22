@@ -104,7 +104,7 @@ const counts = {
                   <div class="visual-body">
                     {hasMultiScreens ? (
                       <div class="card-carousel" data-card-carousel data-total={projectScreens.length}>
-                        <div class="card-carousel-track">
+                        <div class="card-carousel-track" data-card-track>
                           {projectScreens.map((screen, sIdx) => (
                             <div 
                               class={`card-carousel-slide ${sIdx === 0 ? 'is-active' : ''}`} 
@@ -114,47 +114,53 @@ const counts = {
                                 src={withBase(screen.src)} 
                                 alt={screen.alt || project.title} 
                                 loading={i === 0 && sIdx === 0 ? 'eager' : 'lazy'} 
+                                draggable="false"
                                 class="visual-img" 
                               />
                             </div>
                           ))}
                         </div>
 
-                        <div class="card-carousel-overlay">
-                          <button 
-                            type="button" 
-                            class="card-carousel-arrow card-carousel-arrow--prev" 
-                            data-card-prev 
-                            title="Previous image"
-                            aria-label="Previous image"
-                          >
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                              <polyline points="15 18 9 12 15 6"></polyline>
-                            </svg>
-                          </button>
-
-                          <div class="card-carousel-dots" role="tablist" aria-label="Screenshots">
+                        <div class="card-carousel-bar">
+                          <div class="card-timeline" role="tablist" aria-label="Screenshots">
                             {projectScreens.map((screen, sIdx) => (
                               <button 
                                 type="button" 
-                                class={`card-carousel-dot ${sIdx === 0 ? 'is-active' : ''}`} 
-                                data-card-dot={sIdx}
+                                class={`card-timeline-seg ${sIdx === 0 ? 'is-active' : ''}`} 
+                                data-card-segment={sIdx}
                                 aria-label={`Slide ${sIdx + 1}: ${screen.title || ''}`}
-                              />
+                              >
+                                <span class="card-timeline-track">
+                                  <span class="card-timeline-fill" />
+                                </span>
+                              </button>
                             ))}
                           </div>
 
-                          <button 
-                            type="button" 
-                            class="card-carousel-arrow card-carousel-arrow--next" 
-                            data-card-next 
-                            title="Next image"
-                            aria-label="Next image"
-                          >
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                              <polyline points="9 18 15 12 9 6"></polyline>
-                            </svg>
-                          </button>
+                          <div class="card-nav-arrows">
+                            <button 
+                              type="button" 
+                              class="card-nav-arrow card-nav-arrow--prev" 
+                              data-card-prev 
+                              title="Previous screenshot"
+                              aria-label="Previous screenshot"
+                            >
+                              <svg width="11" height="11" viewBox="0 0 16 16" fill="none">
+                                <path d="M10 13 5 8l5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                              </svg>
+                            </button>
+                            <button 
+                              type="button" 
+                              class="card-nav-arrow card-nav-arrow--next" 
+                              data-card-next 
+                              title="Next screenshot"
+                              aria-label="Next screenshot"
+                            >
+                              <svg width="11" height="11" viewBox="0 0 16 16" fill="none">
+                                <path d="m6 3 5 5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                              </svg>
+                            </button>
+                          </div>
                         </div>
                       </div>
                     ) : project.image ? (
@@ -345,42 +351,70 @@ const counts = {
     });
   });
 
-  // Card Carousels
+  // Card Carousels with Real Grab-and-Drag & Story Progress
   const carousels = document.querySelectorAll<HTMLElement>('[data-card-carousel]');
 
   carousels.forEach((carousel) => {
+    const track = carousel.querySelector<HTMLElement>('[data-card-track]');
     const slides = carousel.querySelectorAll<HTMLElement>('[data-card-slide]');
-    const dots = carousel.querySelectorAll<HTMLButtonElement>('[data-card-dot]');
+    const segments = carousel.querySelectorAll<HTMLButtonElement>('[data-card-segment]');
     const prevBtn = carousel.querySelector<HTMLButtonElement>('[data-card-prev]');
     const nextBtn = carousel.querySelector<HTMLButtonElement>('[data-card-next]');
+    const link = carousel.closest('a');
     const total = slides.length;
-    if (total <= 1) return;
+    if (total <= 1 || !track) return;
 
     let activeIdx = 0;
     let timer: number | null = null;
+    let isDragging = false;
+    let didDrag = false;
+    let startX = 0;
+    let deltaX = 0;
 
-    const setSlide = (idx: number) => {
+    const setSlide = (idx: number, animate = true) => {
       activeIdx = (idx + total) % total;
+      if (animate) {
+        track.style.transition = 'transform 0.45s cubic-bezier(0.22, 1, 0.36, 1)';
+      } else {
+        track.style.transition = 'none';
+      }
+      track.style.transform = `translate3d(-${activeIdx * 100}%, 0, 0)`;
+
       slides.forEach((s, i) => {
         s.classList.toggle('is-active', i === activeIdx);
       });
-      dots.forEach((d, i) => {
-        d.classList.toggle('is-active', i === activeIdx);
-        d.setAttribute('aria-selected', i === activeIdx ? 'true' : 'false');
+
+      segments.forEach((seg, i) => {
+        seg.classList.remove('is-active', 'is-done', 'is-paused');
+        const fill = seg.querySelector<HTMLElement>('.card-timeline-fill');
+        if (fill) {
+          fill.style.transition = '';
+        }
+        if (i < activeIdx) {
+          seg.classList.add('is-done');
+        } else if (i === activeIdx) {
+          void seg.offsetWidth;
+          seg.classList.add('is-active');
+        }
       });
     };
 
     const startTimer = () => {
       stopTimer();
+      setSlide(activeIdx);
       timer = window.setInterval(() => {
         setSlide(activeIdx + 1);
-      }, 4200);
+      }, 4500);
     };
 
     const stopTimer = () => {
       if (timer) {
         clearInterval(timer);
         timer = null;
+      }
+      const activeSeg = segments[activeIdx];
+      if (activeSeg) {
+        activeSeg.classList.add('is-paused');
       }
     };
 
@@ -398,8 +432,8 @@ const counts = {
       startTimer();
     });
 
-    dots.forEach((dot, idx) => {
-      dot.addEventListener('click', (e) => {
+    segments.forEach((seg, idx) => {
+      seg.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
         setSlide(idx);
@@ -407,32 +441,86 @@ const counts = {
       });
     });
 
+    // ── Mouse & Touch Grab & Drag ──
+    const onPointerDown = (clientX: number) => {
+      isDragging = true;
+      didDrag = false;
+      startX = clientX;
+      deltaX = 0;
+      stopTimer();
+      carousel.classList.add('is-dragging');
+      track.style.transition = 'none';
+    };
+
+    const onPointerMove = (clientX: number) => {
+      if (!isDragging) return;
+      deltaX = clientX - startX;
+      if (Math.abs(deltaX) > 6) {
+        didDrag = true;
+      }
+      const width = carousel.offsetWidth || 1;
+      const pct = (deltaX / width) * 100;
+      track.style.transform = `translate3d(calc(-${activeIdx * 100}% + ${pct}%), 0, 0)`;
+    };
+
+    const onPointerUp = () => {
+      if (!isDragging) return;
+      isDragging = false;
+      carousel.classList.remove('is-dragging');
+      const width = carousel.offsetWidth || 1;
+      const threshold = width * 0.15;
+      if (deltaX < -threshold) {
+        setSlide(activeIdx + 1);
+      } else if (deltaX > threshold) {
+        setSlide(activeIdx - 1);
+      } else {
+        setSlide(activeIdx);
+      }
+      startTimer();
+    };
+
+    // Mouse events
+    carousel.addEventListener('mousedown', (e) => {
+      if ((e.target as HTMLElement).closest('.card-nav-arrows, .card-timeline')) return;
+      onPointerDown(e.clientX);
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (isDragging) onPointerMove(e.clientX);
+    });
+
+    window.addEventListener('mouseup', () => {
+      if (isDragging) onPointerUp();
+    });
+
+    // Touch events
+    carousel.addEventListener('touchstart', (e) => {
+      if ((e.target as HTMLElement).closest('.card-nav-arrows, .card-timeline')) return;
+      onPointerDown(e.touches[0].clientX);
+    }, { passive: true });
+
+    carousel.addEventListener('touchmove', (e) => {
+      if (isDragging) onPointerMove(e.touches[0].clientX);
+    }, { passive: true });
+
+    carousel.addEventListener('touchend', () => {
+      if (isDragging) onPointerUp();
+    }, { passive: true });
+
+    // Suppress link click if user was dragging
+    link?.addEventListener('click', (e) => {
+      if (didDrag) {
+        e.preventDefault();
+        e.stopPropagation();
+        didDrag = false;
+      }
+    }, true);
+
     const projectCard = carousel.closest('.project');
     if (projectCard) {
       projectCard.addEventListener('mouseenter', stopTimer);
       projectCard.addEventListener('mouseleave', startTimer);
-      projectCard.addEventListener('focusin', stopTimer);
-      projectCard.addEventListener('focusout', startTimer);
     }
-
-    // Mobile touch swipe
-    let startX = 0;
-    carousel.addEventListener('touchstart', (e) => {
-      stopTimer();
-      startX = e.touches[0].clientX;
-    }, { passive: true });
-
-    carousel.addEventListener('touchend', (e) => {
-      const diffX = e.changedTouches[0].clientX - startX;
-      if (Math.abs(diffX) > 35) {
-        if (diffX > 0) {
-          setSlide(activeIdx - 1);
-        } else {
-          setSlide(activeIdx + 1);
-        }
-      }
-      startTimer();
-    }, { passive: true });
 
     startTimer();
   });
@@ -659,33 +747,41 @@ const counts = {
     transform: scale(1.04);
   }
 
-  /* ── Homepage Card Carousel ── */
+  /* ── Homepage Card Carousel (Drag Ribbon & Story Timeline) ── */
   .card-carousel {
     position: relative;
     width: 100%;
     height: 100%;
     overflow: hidden;
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: pan-y;
+  }
+  .card-carousel.is-dragging {
+    cursor: grabbing;
   }
   .card-carousel-track {
-    position: relative;
+    display: flex;
+    flex-direction: row;
     width: 100%;
     height: 100%;
+    will-change: transform;
+    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
   }
   .card-carousel-slide {
-    position: absolute;
-    inset: 0;
+    flex: 0 0 100%;
     width: 100%;
     height: 100%;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.45s ease, visibility 0.45s ease;
-  }
-  .card-carousel-slide.is-active {
-    opacity: 1;
-    visibility: visible;
     position: relative;
+    user-select: none;
   }
-  .card-carousel-overlay {
+  .card-carousel-slide img {
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+  .card-carousel-bar {
     position: absolute;
     bottom: 0.75rem;
     left: 0.75rem;
@@ -693,77 +789,89 @@ const counts = {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    pointer-events: none;
+    gap: 0.75rem;
     z-index: 5;
-    opacity: 0.85;
-    transition: opacity 0.25s ease;
+    pointer-events: none;
   }
-  .project:hover .card-carousel-overlay {
-    opacity: 1;
-  }
-  .card-carousel-dots {
+  .card-timeline {
     display: flex;
     align-items: center;
-    gap: 0.4rem;
-    padding: 0.25rem 0.6rem;
-    border-radius: 999px;
-    background: rgba(18, 17, 14, 0.68);
-    backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    gap: 0.35rem;
     pointer-events: auto;
-  }
-  .card-carousel-dot {
-    width: 0.42rem;
-    height: 0.42rem;
+    background: rgba(15, 14, 12, 0.65);
+    padding: 0.35rem 0.6rem;
     border-radius: 999px;
-    background: rgba(255, 255, 255, 0.45);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+  }
+  .card-timeline-seg {
+    display: block;
+    padding: 0.2rem 0;
+    background: transparent;
     border: none;
-    padding: 0;
     cursor: pointer;
+  }
+  .card-timeline-track {
+    display: block;
+    width: 1.65rem;
+    height: 3px;
+    border-radius: 2px;
+    background: rgba(255, 255, 255, 0.3);
+    overflow: hidden;
+    position: relative;
+  }
+  .card-timeline-fill {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 0.2s ease;
+  }
+  .card-timeline-seg.is-done .card-timeline-fill {
+    transform: scaleX(1);
+  }
+  .card-timeline-seg.is-active .card-timeline-fill {
+    transform: scaleX(1);
+    transition: transform 4.5s linear;
+  }
+  .card-timeline-seg.is-paused .card-timeline-fill {
+    transition: none !important;
+  }
+  .card-nav-arrows {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    pointer-events: auto;
+    opacity: 0;
+    transform: translateY(2px);
     transition: all 0.25s ease;
   }
-  .card-carousel-dot:hover {
-    background: rgba(255, 255, 255, 0.85);
-    transform: scale(1.2);
+  .project:hover .card-nav-arrows {
+    opacity: 1;
+    transform: translateY(0);
   }
-  .card-carousel-dot.is-active {
-    width: 1.15rem;
-    background: var(--accent);
-    box-shadow: 0 0 8px rgba(188, 79, 36, 0.6);
-  }
-  .card-carousel-arrow {
+  .card-nav-arrow {
     display: grid;
     place-items: center;
-    width: 1.85rem;
-    height: 1.85rem;
-    border-radius: 50%;
-    background: rgba(18, 17, 14, 0.72);
+    width: 1.65rem;
+    height: 1.65rem;
+    border-radius: 4px;
+    background: rgba(15, 14, 12, 0.72);
     color: #fff;
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    backdrop-filter: blur(8px);
-    pointer-events: auto;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    backdrop-filter: blur(6px);
     cursor: pointer;
-    opacity: 0;
-    transform: scale(0.85);
-    transition: all 0.25s var(--ease-out);
+    transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
   }
-  .project:hover .card-carousel-arrow {
-    opacity: 1;
-    transform: scale(1);
-  }
-  .card-carousel-arrow:hover {
+  .card-nav-arrow:hover {
     background: var(--accent);
     border-color: var(--accent);
-    color: #fff;
-    transform: scale(1.1);
-  }
-  @media (max-width: 768px) {
-    .card-carousel-arrow {
-      opacity: 0.9;
-      transform: scale(0.95);
-      width: 1.7rem;
-      height: 1.7rem;
-    }
+    transform: scale(1.08);
   }
 
   .visual-hover-badge {
