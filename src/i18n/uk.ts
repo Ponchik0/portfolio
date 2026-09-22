@@ -105,7 +105,7 @@ export const uk: Dictionary = {
           {
             src: 'projects/zoovix/home.webp',
             alt: 'Головний екран Zoovix із добірками фільмів та hero-банером',
-            title: 'Головна вітрина та стрімінг-хаб',
+            title: 'Home Showcase & Streaming',
             caption: 'Динамічний hero-банер премʼєр, каруселі очікуваних новинок, швидкий доступ до перегляду та тематичні добірки.'
           },
           {

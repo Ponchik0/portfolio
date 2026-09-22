@@ -66,6 +66,11 @@ const counts = {
         t.items.map((project, i) => {
           const isFlagship = project.slug === 'zoovix';
           const isDefaultHidden = (project.category || 'web') !== 'web';
+          const projectScreens = (project.gallery && project.gallery.length > 0)
+            ? project.gallery
+            : (project.image ? [{ src: project.image, alt: project.title, title: project.title }] : []);
+          const hasMultiScreens = projectScreens.length > 1;
+
           return (
             <article 
               class={`project ${isFlagship ? 'project--flagship' : ''}`} 
@@ -97,7 +102,62 @@ const counts = {
                   )}
 
                   <div class="visual-body">
-                    {project.image ? (
+                    {hasMultiScreens ? (
+                      <div class="card-carousel" data-card-carousel data-total={projectScreens.length}>
+                        <div class="card-carousel-track">
+                          {projectScreens.map((screen, sIdx) => (
+                            <div 
+                              class={`card-carousel-slide ${sIdx === 0 ? 'is-active' : ''}`} 
+                              data-card-slide={sIdx}
+                            >
+                              <img 
+                                src={withBase(screen.src)} 
+                                alt={screen.alt || project.title} 
+                                loading={i === 0 && sIdx === 0 ? 'eager' : 'lazy'} 
+                                class="visual-img" 
+                              />
+                            </div>
+                          ))}
+                        </div>
+
+                        <div class="card-carousel-overlay">
+                          <button 
+                            type="button" 
+                            class="card-carousel-arrow card-carousel-arrow--prev" 
+                            data-card-prev 
+                            title="Previous image"
+                            aria-label="Previous image"
+                          >
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                              <polyline points="15 18 9 12 15 6"></polyline>
+                            </svg>
+                          </button>
+
+                          <div class="card-carousel-dots" role="tablist" aria-label="Screenshots">
+                            {projectScreens.map((screen, sIdx) => (
+                              <button 
+                                type="button" 
+                                class={`card-carousel-dot ${sIdx === 0 ? 'is-active' : ''}`} 
+                                data-card-dot={sIdx}
+                                aria-label={`Slide ${sIdx + 1}: ${screen.title || ''}`}
+                              />
+                            ))}
+                          </div>
+
+                          <button 
+                            type="button" 
+                            class="card-carousel-arrow card-carousel-arrow--next" 
+                            data-card-next 
+                            title="Next image"
+                            aria-label="Next image"
+                          >
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                              <polyline points="9 18 15 12 9 6"></polyline>
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                    ) : project.image ? (
                       <img src={withBase(project.image)} alt={`Preview of ${project.title}`} loading="lazy" class="visual-img" />
                     ) : (
                       <div class="placeholder" aria-hidden="true">
@@ -283,6 +343,98 @@ const counts = {
         }
       });
     });
+  });
+
+  // Card Carousels
+  const carousels = document.querySelectorAll<HTMLElement>('[data-card-carousel]');
+
+  carousels.forEach((carousel) => {
+    const slides = carousel.querySelectorAll<HTMLElement>('[data-card-slide]');
+    const dots = carousel.querySelectorAll<HTMLButtonElement>('[data-card-dot]');
+    const prevBtn = carousel.querySelector<HTMLButtonElement>('[data-card-prev]');
+    const nextBtn = carousel.querySelector<HTMLButtonElement>('[data-card-next]');
+    const total = slides.length;
+    if (total <= 1) return;
+
+    let activeIdx = 0;
+    let timer: number | null = null;
+
+    const setSlide = (idx: number) => {
+      activeIdx = (idx + total) % total;
+      slides.forEach((s, i) => {
+        s.classList.toggle('is-active', i === activeIdx);
+      });
+      dots.forEach((d, i) => {
+        d.classList.toggle('is-active', i === activeIdx);
+        d.setAttribute('aria-selected', i === activeIdx ? 'true' : 'false');
+      });
+    };
+
+    const startTimer = () => {
+      stopTimer();
+      timer = window.setInterval(() => {
+        setSlide(activeIdx + 1);
+      }, 4200);
+    };
+
+    const stopTimer = () => {
+      if (timer) {
+        clearInterval(timer);
+        timer = null;
+      }
+    };
+
+    prevBtn?.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setSlide(activeIdx - 1);
+      startTimer();
+    });
+
+    nextBtn?.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setSlide(activeIdx + 1);
+      startTimer();
+    });
+
+    dots.forEach((dot, idx) => {
+      dot.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setSlide(idx);
+        startTimer();
+      });
+    });
+
+    const projectCard = carousel.closest('.project');
+    if (projectCard) {
+      projectCard.addEventListener('mouseenter', stopTimer);
+      projectCard.addEventListener('mouseleave', startTimer);
+      projectCard.addEventListener('focusin', stopTimer);
+      projectCard.addEventListener('focusout', startTimer);
+    }
+
+    // Mobile touch swipe
+    let startX = 0;
+    carousel.addEventListener('touchstart', (e) => {
+      stopTimer();
+      startX = e.touches[0].clientX;
+    }, { passive: true });
+
+    carousel.addEventListener('touchend', (e) => {
+      const diffX = e.changedTouches[0].clientX - startX;
+      if (Math.abs(diffX) > 35) {
+        if (diffX > 0) {
+          setSlide(activeIdx - 1);
+        } else {
+          setSlide(activeIdx + 1);
+        }
+      }
+      startTimer();
+    }, { passive: true });
+
+    startTimer();
   });
 </script>
 
@@ -505,6 +657,113 @@ const counts = {
 
   .project:hover .visual-img {
     transform: scale(1.04);
+  }
+
+  /* ── Homepage Card Carousel ── */
+  .card-carousel {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+  .card-carousel-track {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+  .card-carousel-slide {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.45s ease, visibility 0.45s ease;
+  }
+  .card-carousel-slide.is-active {
+    opacity: 1;
+    visibility: visible;
+    position: relative;
+  }
+  .card-carousel-overlay {
+    position: absolute;
+    bottom: 0.75rem;
+    left: 0.75rem;
+    right: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    pointer-events: none;
+    z-index: 5;
+    opacity: 0.85;
+    transition: opacity 0.25s ease;
+  }
+  .project:hover .card-carousel-overlay {
+    opacity: 1;
+  }
+  .card-carousel-dots {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+    background: rgba(18, 17, 14, 0.68);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    pointer-events: auto;
+  }
+  .card-carousel-dot {
+    width: 0.42rem;
+    height: 0.42rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.45);
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: all 0.25s ease;
+  }
+  .card-carousel-dot:hover {
+    background: rgba(255, 255, 255, 0.85);
+    transform: scale(1.2);
+  }
+  .card-carousel-dot.is-active {
+    width: 1.15rem;
+    background: var(--accent);
+    box-shadow: 0 0 8px rgba(188, 79, 36, 0.6);
+  }
+  .card-carousel-arrow {
+    display: grid;
+    place-items: center;
+    width: 1.85rem;
+    height: 1.85rem;
+    border-radius: 50%;
+    background: rgba(18, 17, 14, 0.72);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(8px);
+    pointer-events: auto;
+    cursor: pointer;
+    opacity: 0;
+    transform: scale(0.85);
+    transition: all 0.25s var(--ease-out);
+  }
+  .project:hover .card-carousel-arrow {
+    opacity: 1;
+    transform: scale(1);
+  }
+  .card-carousel-arrow:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+    transform: scale(1.1);
+  }
+  @media (max-width: 768px) {
+    .card-carousel-arrow {
+      opacity: 0.9;
+      transform: scale(0.95);
+      width: 1.7rem;
+      height: 1.7rem;
+    }
   }
 
   .visual-hover-badge {

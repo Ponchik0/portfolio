@@ -104,7 +104,7 @@ export const en: Dictionary = {
           {
             src: 'projects/zoovix/home.webp',
             alt: 'Zoovix home screen with featured premiere banner and collections',
-            title: 'Home Showcase & Streaming Hub',
+            title: 'Home Showcase & Streaming',
             caption: 'Dynamic premiere hero banner, upcoming releases carousels, instant playback launch, and curated mood collections.'
           },
           {
