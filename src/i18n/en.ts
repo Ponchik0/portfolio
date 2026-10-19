@@ -323,6 +323,45 @@ export const en: Dictionary = {
           stack: [{ name: 'Tech', items: ['C#', 'Unity Engine'] }],
         },
       },
+      {
+        slug: 'maksym-cafe',
+        title: 'Maksym Café',
+        category: 'business',
+        previewLabel: 'Pilot concept',
+        kind: 'Website concept for a local café',
+        year: '2026',
+        lede: 'A café website concept that brings the menu, dish details and directions together. An independent pilot to demonstrate an interface for a local business.',
+        highlights: [
+          'Menu organised into food and drink categories',
+          'Dish cards with photos, prices and allergen information',
+          'A bar-order list that keeps the guest’s selected items',
+          'Opening hours, address and directions in one place',
+        ],
+        metrics: [],
+        tech: ['React', 'Vite', 'Tailwind CSS', 'Responsive UI'],
+        wip: false,
+        links: [],
+        image: 'projects/maksym-cafe/maksym-menu.png',
+        gallery: [
+          { src: 'projects/maksym-cafe/maksym-menu.png', alt: 'Dessert menu with category filters, photos and prices', title: 'Menu & dish cards', caption: 'Category navigation and clear dish cards help visitors browse the selection.' },
+          { src: 'projects/maksym-cafe/maksym-desktop.png', alt: 'Maksym Café concept hero with menu and lunch links', title: 'First impression', caption: 'The main screen introduces the café and links to the menu, lunches and directions.' },
+          { src: 'projects/maksym-cafe/maksym-mobile.png', alt: 'Maksym Café concept on a phone', title: 'Mobile layout', caption: 'The main content and menu links adapt to a narrow screen.' },
+        ],
+        details: {
+          intro: [
+            'A self-initiated pilot concept for a Kyiv café. It is not the café’s official website or a commissioned client project.',
+            'The idea is to let guests browse the menu and find visitor information on one page. The “To the bar” list collects their choices; the order itself is placed at the café.',
+          ],
+          challenges: [
+            { title: 'Browsing a large menu', text: 'Food and drinks are grouped into categories, with photos, prices and details presented in consistent cards.' },
+            { title: 'Preparing an order', text: 'Guests can collect items in a browser list before ordering at the bar. This concept does not send orders to the café.' },
+          ],
+          stack: [
+            { name: 'Interface', items: ['React', 'Vite', 'Tailwind CSS', 'Responsive layout'] },
+            { name: 'Menu & state', items: ['JSON menu data', 'Category filters', 'Local browser order list'] },
+          ],
+        },
+      },
     ],
   },
 

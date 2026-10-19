@@ -33,7 +33,9 @@ export interface Project {
   /** Часть URL страницы кейса: /projects/<slug>/ */
   slug: string;
   title: string;
-  category?: 'web' | 'mods' | 'tools';
+  category?: 'web' | 'mods' | 'tools' | 'business';
+  /** Label for a concept preview that does not have a public website URL. */
+  previewLabel?: string;
   /** Короткий подзаголовок — что это за продукт */
   kind: string;
   year: string;
