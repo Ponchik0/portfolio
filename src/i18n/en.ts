@@ -2,9 +2,9 @@ import type { Dictionary } from './types';
 
 export const en: Dictionary = {
   meta: {
-    title: 'Bogdan (Ponchik) — Frontend & Game Mod Developer',
+    title: 'Bogdan (Ponchik) — Full-Stack Web Developer',
     description:
-      'Developer portfolio: Flagship web platform Zoovix, massive Unity C# game modifications (WeatherExpansion, SuperCreatures) and interactive tools.',
+      'I build and improve websites: responsive interfaces, backend logic, databases, enquiry forms and integrations. Portfolio of Bogdan (Ponchik).',
   },
 
   nav: {
@@ -16,13 +16,13 @@ export const en: Dictionary = {
   },
 
   hero: {
-    badge: 'Available for innovative projects & collaborations',
+    badge: 'Available for website projects',
     intro: 'Hi, I am',
     name: 'Bogdan (Ponchik)',
-    roleAccent: 'Product & Game Mod Developer,',
-    roleRest: 'building fullstack web platforms and Unity C# game mods',
+    roleAccent: 'website and web application developer,',
+    roleRest: 'from interfaces to backend logic and databases',
     tagline:
-      'Creator of the flagship watch-party cinema catalog Zoovix and a popular series of Unity mods with over 18,500 downloads on Thunderstore.',
+      'I build new websites and improve existing ones: responsive pages, enquiry forms, user accounts and integrations. I set up databases and help get websites live.',
     ctaProjects: 'View Projects',
     ctaContact: 'Get in Touch',
     scroll: 'scroll',
@@ -43,7 +43,7 @@ export const en: Dictionary = {
     heading: 'Code is craftsmanship and',
     headingAccent: 'product engineering',
     paragraphs: [
-      'I am a developer and mod creator based in Kyiv. My primary focus is building end-to-end products: from fullstack real-time web platforms to complex Unity game modifications with network multiplayer synchronization.',
+      'I am a web developer based in Kyiv, working across frontend and backend. I build responsive interfaces and server-side logic, connect databases and integrate external services. I can create a new website or add the features an existing one needs.',
       'My flagship project is Zoovix — a movie and anime catalog with gamification and synchronized real-time watch-party rooms. In parallel, I developed a series of mods for How to Fish (SuperCreatures, WeatherExpansion, BaitIndex, ScoreAlways) with 18,500+ total downloads on Thunderstore.',
       'I place high emphasis on performance, clean architecture, smooth micro-interactions, and visual fidelity.',
     ],
